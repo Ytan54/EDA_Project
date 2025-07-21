@@ -1,0 +1,289 @@
+---
+title: "EDA_Analysis"
+output: html_document
+date: "2025-07-17"
+---
+### I. INTRODUCTION
+
+### II. Dataset Manipulation
+
+#### 1) Selecting Response Variables and Predictors
+```{r}
+# Install packages
+install.packages("ggplot2")
+install.packages("car")
+install.packages("carData")
+install.packages("ResourceSelection")
+install.packages("pROC")
+install.packages("dplyr")
+```
+
+```{r}
+# Load libraries
+library(ggplot2)
+library(car)
+library(carData)
+library(ResourceSelection)
+library(pROC)
+library(dplyr)
+```
+
+```{r}
+#Load original dataset
+df <- read.csv("data/2015.csv")
+```
+
+```{r}
+#Select relevant predictors and dependent variable
+df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_BMI5",
+              "X_BMI5CAT", "BPHIGH4", "HLTHPLN1", "EXERANY2")]
+```
+
+#### 2) Recoding Variables
+Recoding numerical values to detailed categorical levels
+```{r}
+# Recode CVDINFR4
+df1$CVDINFR4[df1$CVDINFR4 %in% c(7, 9)] <- NA
+df1$CVDINFR4 <- factor(df1$CVDINFR4, levels = c(1, 2), labels = c("Yes", "No"))
+
+# Recode SEX
+df1$SEX <- factor(df1$SEX, levels = c(1, 2), labels = c("Male", "Female"))
+
+# Recode INCOME2
+df1$INCOME2[df1$INCOME2 %in% c(77, 99)] <- NA
+df1$INCOME2 <- factor(df1$INCOME2, levels = c(1:8),
+                      labels = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k",
+                                 "$35-50k", "$50-75k", ">=75k"))
+
+# Recode _RACEGR3 as factor with appropriate labels
+df1$RACEGR3 <- factor(df1$`X_RACEGR3`,
+                         levels = c(1, 2, 3, 4, 5, 6, 7, 9),
+                         labels = c("White", "Black", "Asian",
+                                    "NH/PI", "AI/AN", "Other",
+                                    "Multiracial", NA))
+
+# Recode _AGEG5YR
+df1$AGEG5YR <- factor(df1$`X_AGEG5YR`, levels = 1:13,
+                         labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49",
+                                    "50–54", "55–59", "60–64", "65–69", "70–74", "75–79", "80+"))
+
+# Recode _BMI5 
+df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
+
+# Recode _BMI5CAT
+df1$BMI5CAT <- factor(df1$`X_BMI5CAT`, levels = 1:4,
+                         labels = c("Underweight", "Normal", "Overweight", "Obese"))
+
+# Recode BPHIGH4
+df1$BPHIGH4[df1$BPHIGH4 %in% c(7, 9)] <- NA
+df1$BPHIGH4 <- factor(df1$BPHIGH4, levels = c(1, 2, 3, 4),
+                      labels = c("Yes", "No", "Borderline", "Pregnancy"))
+
+# Recode HLTHPLN1
+df1$HLTHPLN1[df1$HLTHPLN1 %in% c(7, 9)] <- NA
+df1$HLTHPLN1 <- factor(df1$HLTHPLN1, levels = c(1, 2), labels = c("Yes", "No"))
+
+# Recode EXERANY2
+df1$EXERANY2[df1$EXERANY2 %in% c(7, 9)] <- NA
+df1$EXERANY2 <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
+```
+
+#### 3) Handling Missing Values
+Filtering out rows with N/A
+```{r}
+# Remove rows with any NA values
+df_clean <- na.omit(df1)  
+nrow(df_clean)
+
+#save cleaned files into csv
+write.csv(df_clean, "data/cleaned_data.csv", row.names = FALSE)
+```
+
+### III. Data Visualization and Tendency Measurement
+
+#### 1) Frequency Distribution of Heart Attack and Predictors
+
+Define Mode Functions for central tendency measurement
+```{r}
+# Function to calculate mode
+get_mode <- function(v) {
+  tbl <- table(v)
+  mode_val <- names(tbl)[which.max(tbl)]
+  return(mode_val)
+}
+```
+
+**(a)** Response Variable -- CVDINFR4
+```{r}
+#table
+table(df_clean$CVDINFR4)
+prop.table(table(df_clean$CVDINFR4))
+
+#Bar graph
+ggplot(df_clean, aes(x = CVDINFR4)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of CVDINFR4 Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Head_Attack\n")
+cat("Mode:", get_mode(df_clean$CVDINFR4), "\n\n")
+```
+
+**Conclusion**: Based on the mode calcularion, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having diabetes, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
+<br><br>
+
+**(b)** Predictor -- Sex
+```{r}
+#table
+table(df_clean$SEX)
+prop.table(table(df_clean$SEX))
+
+#Bar graph
+ggplot(df_clean, aes(x = SEX)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Sex Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Sex\n")
+cat("Mode:", get_mode(df_clean$SEX), "\n\n")
+```
+
+**(c)** Predictor -- Income
+```{r}
+#table
+table(df_clean$INCOME2)
+prop.table(table(df_clean$INCOME2))
+
+#Bar graph
+ggplot(df_clean, aes(x = INCOME2)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Income Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median
+cat("Income\n")
+cat("Mode:", get_mode(df_clean$INCOME2), "\n")
+
+# Median (convert to numeric index and retrieve label)
+income_numeric <- as.numeric(df_clean$INCOME2)
+income_levels <- levels(df_clean$INCOME2)
+income_median_label <- income_levels[median(income_numeric, na.rm = TRUE)]
+cat("Median:", income_median_label, "\n")
+```
+
+**(d)** Predictor -- Race
+```{r}
+#table
+table(df_clean$RACEGR3)
+prop.table(table(df_clean$RACEGR3))
+
+#Bar graph
+ggplot(df_clean, aes(x = RACEGR3)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Race Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Race\n")
+cat("Mode:", get_mode(df_clean$RACEGR3), "\n\n")
+```
+
+**(e)** Predictor -- Age
+```{r}
+#table
+table(df_clean$AGEG5YR)
+prop.table(table(df_clean$AGEG5YR))
+
+#Bar graph
+ggplot(df_clean, aes(x = AGEG5YR)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Age Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median
+cat("AGEG5YR\n")
+cat("Mode:", get_mode(df_clean$AGEG5YR), "\n")
+median_index <- median(as.numeric(df_clean$AGEG5YR), na.rm = TRUE)
+median_label <- levels(df_clean$AGEG5YR)[median_index]
+cat("Median:", median_label, "\n\n")
+```
+
+**(f)** Predictor -- BMI
+```{r}
+#Bar graph
+ggplot(df_clean, aes(x = X_BMI5)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of BMI Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median and Mean
+cat("_BMI5\n")
+cat("Mode:", get_mode(df_clean$`X_BMI5`), "\n")
+cat("Median:", median(df_clean$`X_BMI5`, na.rm = TRUE), "\n")
+cat("Mean:", mean(df_clean$`X_BMI5`, na.rm = TRUE), "\n\n")
+```
+
+**(g)** Predictor -- Blood Pressure
+```{r}
+#table
+table(df_clean$BPHIGH4)
+prop.table(table(df_clean$BPHIGH4))
+
+#Bar graph
+ggplot(df_clean, aes(x = BPHIGH4)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Blood Pressure Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Blood_Pressure\n")
+cat("Mode:", get_mode(df_clean$BPHIGH4), "\n\n")
+```
+
+**(g)** Predictor -- Healthcare Coverage
+```{r}
+#table
+table(df_clean$HLTHPLN1)
+prop.table(table(df_clean$HLTHPLN1))
+
+#Bar graph
+ggplot(df_clean, aes(x = HLTHPLN1)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Healthcare Coverage Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Healthcare_Coverage\n")
+cat("Mode:", get_mode(df_clean$HLTHPLN1), "\n\n")
+```
+
+**(h)** Predictor -- EXERANY2
+```{r}
+#table
+table(df_clean$EXERANY2)
+prop.table(table(df_clean$EXERANY2))
+
+#Bar graph
+ggplot(df_clean, aes(x = EXERANY2)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Exercise Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Exercise\n")
+cat("Mode:", get_mode(df_clean$EXERANY2), "\n\n")
+```
+
+
+
