@@ -67,14 +67,14 @@ By focusing on heart attacks, we aim to investigate behavioral and demographic r
 ### II. Dataset Manipulation
 
 #### 1) Selecting Response Variables and Predictors
-install.packages(ggplot2)
+
 ```{r}
-install.packages(ggplot2)
-install.packages(car)
-install.packages(carData)
-install.packages(ResourceSelection)
-install.packages(pROC)
-install.packages(dyplr)
+install.packages("ggplot2")
+install.packages("car")
+install.packages("carData")
+install.packages("ResourceSelection")
+install.packages("pROC")
+install.packages("dplyr")
 ```
 We set up the environment and install the packages necessary for our data analyis below, relying on libraries for different functions and plotting mechanics that aren't available to us, without having to recreate them.
 
@@ -308,6 +308,7 @@ cat("Mean:", mean(df_clean$`X_BMI5`, na.rm = TRUE), "\n\n")
 ```
 
 We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
+
 **(g)** Predictor -- Blood Pressure
 ```{r}
 #table
