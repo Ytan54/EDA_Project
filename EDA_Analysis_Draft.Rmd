@@ -1,0 +1,366 @@
+---
+title: "EDA Notebook Analysis"
+output: html_document
+date: "2025-07-17"
+---
+### I. INTRODUCTION:
+#### 1) Introducing the Dataset
+The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Surveillance System (BRFSS)—a nationwide health survey conducted by the Centers for Disease Control and Prevention (CDC) in collaboration with U.S. states and territories. For simplicity, we will refer to it as BRFSS throughout the analysis. Data are collected annually through telephone interviews, both landline and cellular, targeting adults aged 18 and older living in noninstitutionalized, community-based settings.
+
+The primary objective of BRFSS is to monitor health-related risk behaviors, chronic conditions, and use of preventive services across the U.S. population. In 2015, the survey was administered in all 50 states, the District of Columbia, Puerto Rico, and Guam—producing one of the most comprehensive public datasets on health behaviors. The data are weighted to reflect state-level populations and are widely used by public health officials to guide policy decisions, allocate resources, and track trends over time.
+
+From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respondent confidentiality. All data are fully de-identified prior to public release and reported only at the aggregate level. Although the dataset is exempt from formal Institutional Review Board (IRB) oversight due to its public and anonymized nature, we strive to approach the analysis with care to avoid misinterpretation or overgeneralization, particularly when examining outcomes for vulnerable or underrepresented populations.
+
+#### 2) Description of Selected Variables
+
+- **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
+  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+
+- **SEX**: Biological sex of the respondent.  
+  - 1 = Male - 2 = Female  
+
+- **INCOME2**: Annual household income from all sources, in categorical brackets.  
+  - 1–8 = Ranges from < $10,000 to ≥ $75,000 - 77 = Don’t know - 99 = Refused  
+
+- **X_RACEGR3**: Race group (recoded into 3 categories).  
+  - 1 = White only - 2 = Black only - 3 = Other or multiracial  
+
+- **X_AGEG5YR**: Age group in 5-year intervals.  
+  - 1 = 18–24 - 2 = 25–29 - ... - 13 = 80+  
+
+- **X_BMI5**: Body Mass Index (BMI), calculated as BMI × 100.  
+  - Continuous variable: Divide by 100 to get actual BMI  
+
+- **X_BMI5CAT**: BMI category based on X_BMI5.  
+  - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
+
+- **BPHIGH4**: Ever told by a health professional that they have high blood pressure.  
+  - 1 = Yes - 2 = Yes, only during pregnancy - 3 = No - 4 = Borderline/pre-hypertensive - 7 = Don’t know - 9 = Refused  
+
+- **HLTHPLN1**: Whether respondent currently has any health care coverage.  
+  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+
+- **EXERANY2**: Whether the respondent did any physical activity (excluding work) in the past 30 days.  
+  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+
+              
+#### 3) Research Interest
+We focus on the 2015 BRFSS dataset in this analysis for both practical and historical reasons. As BRFSS is a repeated annual survey, selecting a past year like 2015 allows us to lay the groundwork for decade-long comparisons with newer datasets, such as the 2025 BRFSS. Notably, more recent datasets have limitations in coverage. For example, the 2023 dataset lacks data from several large states, including Pennsylvania and Kentucky, potentially compromising the representativeness and completeness of national estimates.
+
+In addition, BRFSS datasets from 2016 onward has been modified to comply with Trump executive orders, including adjustments in how federal health agencies presented and coded data—especially regarding race, ethnicity, and health equity. While some of these changes aimed to improve data transparency, and alignment with federal guidelines, they also introduced inconsistencies in demographic variables that can complicate subgroup comparisons and make patterns harder to interpret.
+
+By contrast, the 2015 dataset offers a more stable and widely used structure, making it easier to replicate established methods and ensure interpretability. It also predates politically motivated changes in public health messaging, which is important when exploring socially sensitive outcomes like cardiovascular disease risk across race and income groups.
+
+In this project, we specifically focus on **heart attack** (variable: `CVDINFR4`) as the response variable, rather than broader cardiovascular conditions such as **angina or coronary heart disease** (`CVDCRHD4`). This decision is based on several factors:
+
+- **Higher prevalence**: In the 2015 dataset, there are more reported cases of heart attack than angina or CHD, giving us more statistical power.
+
+- **Clinical severity**: Heart attacks are typically more immediately life-threatening and often require urgent medical care, making them a strong marker of cardiovascular crisis.
+
+- **Distinct diagnosis**: It is possible to experience a heart attack without a prior diagnosis of coronary heart disease, so using heart attack as a primary outcome helps avoid selection bias based on access to preventive diagnostics.
+
+- **Public health significance**: According to the CDC, heart attacks contribute to roughly one in every five deaths from cardiovascular disease in the U.S., emphasizing their impact on morbidity and mortality ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).
+
+By focusing on heart attacks, we aim to investigate behavioral and demographic risk factors associated with this critical health outcome and identify population groups that may benefit most from targeted interventions.
+
+
+### II. Dataset Manipulation
+
+#### 1) Selecting Response Variables and Predictors
+install.packages(ggplot2)
+```{r}
+install.packages(ggplot2)
+install.packages(car)
+install.packages(carData)
+install.packages(ResourceSelection)
+install.packages(pROC)
+install.packages(dyplr)
+```
+We set up the environment and install the packages necessary for our data analyis below, relying on libraries for different functions and plotting mechanics that aren't available to us, without having to recreate them.
+
+```{r}
+# Load libraries
+library(ggplot2)
+library(car)
+library(carData)
+library(ResourceSelection)
+library(pROC)
+library(dplyr)
+```
+
+We load all the installed packages above to make the functions within them avaialble to use in our script.
+```{r}
+#Load original dataset
+df <- read.csv("/Users/romzuckerman/Downloads/2015.csv")
+```
+
+```{r}
+#Select relevant predictors and dependent variable
+df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_BMI5",
+              "X_BMI5CAT", "BPHIGH4", "HLTHPLN1", "EXERANY2")]
+```
+
+At the end of our initial environment preparing section, we load our dataset into R Studio, while defining our relevant predictors (or independent variables), along with our dependent variable, for the folowing set of data analysis.
+
+This marks the end of the first chunk of code - initalizing and enviornment-defining. This chunk allows us to make sure that all of our data, functions, and relevant variables are ready to be used in other chunks that might call upon them for data analysis. By ensuring that each of these steps gets executed, we know that no matter where this code is run from, it will always have the same reliable and working enviornment to call upon.
+
+#### 2) Recoding Variables
+
+```{r}
+# Recode CVDINFR4
+df1$CVDINFR4[df1$CVDINFR4 %in% c(7, 9)] <- NA
+df1$CVDINFR4 <- factor(df1$CVDINFR4, levels = c(1, 2), labels = c("Yes", "No"))
+
+# Recode SEX
+df1$SEX <- factor(df1$SEX, levels = c(1, 2), labels = c("Male", "Female"))
+
+# Recode INCOME2
+df1$INCOME2[df1$INCOME2 %in% c(77, 99)] <- NA
+df1$INCOME2 <- factor(df1$INCOME2, levels = c(1:8),
+                      labels = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k",
+                                 "$35-50k", "$50-75k", ">=75k"))
+
+# Recode _RACEGR3 as factor with appropriate labels
+df1$RACEGR3 <- factor(df1$`X_RACEGR3`,
+                         levels = c(1, 2, 3, 4, 5, 6, 7, 9),
+                         labels = c("White", "Black", "Asian",
+                                    "NH/PI", "AI/AN", "Other",
+                                    "Multiracial", NA))
+
+# Recode _AGEG5YR
+df1$AGEG5YR <- factor(df1$`X_AGEG5YR`, levels = 1:13,
+                         labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49",
+                                    "50–54", "55–59", "60–64", "65–69", "70–74", "75–79", "80+"))
+
+# Recode _BMI5 
+df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
+
+# Recode _BMI5CAT
+df1$BMI5CAT <- factor(df1$`X_BMI5CAT`, levels = 1:4,
+                         labels = c("Underweight", "Normal", "Overweight", "Obese"))
+
+# Recode BPHIGH4
+df1$BPHIGH4[df1$BPHIGH4 %in% c(7, 9)] <- NA
+df1$BPHIGH4 <- factor(df1$BPHIGH4, levels = c(1, 2, 3, 4),
+                      labels = c("Yes", "No", "Borderline", "Pregnancy"))
+
+# Recode HLTHPLN1
+df1$HLTHPLN1[df1$HLTHPLN1 %in% c(7, 9)] <- NA
+df1$HLTHPLN1 <- factor(df1$HLTHPLN1, levels = c(1, 2), labels = c("Yes", "No"))
+
+# Recode EXERANY2
+df1$EXERANY2[df1$EXERANY2 %in% c(7, 9)] <- NA
+df1$EXERANY2 <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
+```
+
+Before we can start working with the data, we must ensure the data is fit to our liking. Thus, we must restructure our variables and labels within the dataset to match what we want to look like. Here we change and reshape our predictors with the subsequent labels we want into the dataset we hope to use for graphing and linear regression analysis. By using the factor() function and specifying our own labels, we create a dataset that we fully know what is in it, and are prepared to write more code on it.
+
+#### 3) Handling Missing Values
+Filtering out rows with N/A
+```{r}
+# Remove rows with any NA values
+df_clean <- na.omit(df1)  
+nrow(df_clean)
+
+#save cleaned files into csv
+write.csv(df_clean, "/Users/romzuckerman/Downloads/cleaned_data.csv", row.names = FALSE)
+```
+
+And in the last step of our dataset cleaning, we must ensure that none of our cleaned dataset has missing values in it, that would later cause a bug when graphing variables or running analysis on them. So we remove any rows within the dataset that might have missing values in it, and export the dataset into a CSV file for any future use we want with the now cleaned dataset.
+
+### III. Data Visualization and Tendency Measurement
+
+#### 1) Frequency Distribution of Heart Attack and Predictors
+
+Define Mode Functions for central tendency measurement
+```{r}
+# Function to calculate mode
+get_mode <- function(v) {
+  tbl <- table(v)
+  mode_val <- names(tbl)[which.max(tbl)]
+  return(mode_val)
+}
+```
+We create the function get_mode(), a function we will later use. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5]
+ is inputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
+ 
+**(a)** Response Variable -- CVDINFR4
+```{r}
+#table
+table(df_clean$CVDINFR4)
+prop.table(table(df_clean$CVDINFR4))
+
+#Bar graph
+ggplot(df_clean, aes(x = CVDINFR4)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of CVDINFR4 Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Head_Attack\n")
+cat("Mode:", get_mode(df_clean$CVDINFR4), "\n\n")
+```
+
+We now use our clean dataset and the dependent response variable CVDINFR4 to create a bar plot of how CVDINFR4 is distributed over the values. We also call our previous defined function get_mode() on the row of CVDINFR4 in our clean dataset to show the mode (or value of highest frequency) for the dependent response variable! 
+
+**Conclusion**: Based on the mode calcularion, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
+<br><br>
+
+**(b)** Predictor -- Sex
+```{r}
+#table
+table(df_clean$SEX)
+prop.table(table(df_clean$SEX))
+
+#Bar graph
+ggplot(df_clean, aes(x = SEX)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Sex Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Sex\n")
+cat("Mode:", get_mode(df_clean$SEX), "\n\n")
+```
+Similar to our previous plotting of the dependent response variable, CVDINFR4, here we begin to graph the distributions of Sex for patients of the study (to which this dataset was made from). We also calculate and list the Mode of the perdictor, using the get_mode function.
+
+**(c)** Predictor -- Income
+```{r}
+#table
+table(df_clean$INCOME2)
+prop.table(table(df_clean$INCOME2))
+
+#Bar graph
+ggplot(df_clean, aes(x = INCOME2)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Income Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median
+cat("Income\n")
+cat("Mode:", get_mode(df_clean$INCOME2), "\n")
+
+# Median (convert to numeric index and retrieve label)
+income_numeric <- as.numeric(df_clean$INCOME2)
+income_levels <- levels(df_clean$INCOME2)
+income_median_label <- income_levels[median(income_numeric, na.rm = TRUE)]
+cat("Median:", income_median_label, "\n")
+```
+
+We continue with the same plotting mechanism we have for other perdictors, but now on Income. Additionally, after calulclating the mode for the perdictor, we also look at the median Income for the dataset of patients!
+
+**(d)** Predictor -- Race
+```{r}
+#table
+table(df_clean$RACEGR3)
+prop.table(table(df_clean$RACEGR3))
+
+#Bar graph
+ggplot(df_clean, aes(x = RACEGR3)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Race Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Race\n")
+cat("Mode:", get_mode(df_clean$RACEGR3), "\n\n")
+```
+
+**(e)** Predictor -- Age
+```{r}
+#table
+table(df_clean$AGEG5YR)
+prop.table(table(df_clean$AGEG5YR))
+
+#Bar graph
+ggplot(df_clean, aes(x = AGEG5YR)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Age Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median
+cat("AGEG5YR\n")
+cat("Mode:", get_mode(df_clean$AGEG5YR), "\n")
+median_index <- median(as.numeric(df_clean$AGEG5YR), na.rm = TRUE)
+median_label <- levels(df_clean$AGEG5YR)[median_index]
+cat("Median:", median_label, "\n\n")
+```
+
+**(f)** Predictor -- BMI
+```{r}
+#Bar graph
+ggplot(df_clean, aes(x = X_BMI5)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of BMI Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode and Median and Mean
+cat("_BMI5\n")
+cat("Mode:", get_mode(df_clean$`X_BMI5`), "\n")
+cat("Median:", median(df_clean$`X_BMI5`, na.rm = TRUE), "\n")
+cat("Mean:", mean(df_clean$`X_BMI5`, na.rm = TRUE), "\n\n")
+```
+
+We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
+**(g)** Predictor -- Blood Pressure
+```{r}
+#table
+table(df_clean$BPHIGH4)
+prop.table(table(df_clean$BPHIGH4))
+
+#Bar graph
+ggplot(df_clean, aes(x = BPHIGH4)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Blood Pressure Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Blood_Pressure\n")
+cat("Mode:", get_mode(df_clean$BPHIGH4), "\n\n")
+```
+
+**(g)** Predictor -- Healthcare Coverage
+```{r}
+#table
+table(df_clean$HLTHPLN1)
+prop.table(table(df_clean$HLTHPLN1))
+
+#Bar graph
+ggplot(df_clean, aes(x = HLTHPLN1)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Healthcare Coverage Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Healthcare_Coverage\n")
+cat("Mode:", get_mode(df_clean$HLTHPLN1), "\n\n")
+```
+
+**(h)** Predictor -- EXERANY2
+```{r}
+#table
+table(df_clean$EXERANY2)
+prop.table(table(df_clean$EXERANY2))
+
+#Bar graph
+ggplot(df_clean, aes(x = EXERANY2)) +
+  geom_bar(fill = "#1a80bb", color = "black") +
+  ggtitle("Bar Plot of Exercise Distribution") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Central Tendency -- Mode
+cat("Exercise\n")
+cat("Mode:", get_mode(df_clean$EXERANY2), "\n\n")
+```
+
+
+
