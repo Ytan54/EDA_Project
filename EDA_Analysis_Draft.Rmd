@@ -10,6 +10,7 @@ The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Sur
 The primary objective of BRFSS is to monitor health-related risk behaviors, chronic conditions, and use of preventive services across the U.S. population. In 2015, the survey was administered in all 50 states, the District of Columbia, Puerto Rico, and Guam—producing one of the most comprehensive public datasets on health behaviors. The data are weighted to reflect state-level populations and are widely used by public health officials to guide policy decisions, allocate resources, and track trends over time.
 
 From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respondent confidentiality. All data are fully de-identified prior to public release and reported only at the aggregate level. Although the dataset is exempt from formal Institutional Review Board (IRB) oversight due to its public and anonymized nature, we strive to approach the analysis with care to avoid misinterpretation or overgeneralization, particularly when examining outcomes for vulnerable or underrepresented populations.
+<br><br>
 
 #### 2) Description of Selected Variables
 
@@ -42,8 +43,8 @@ From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respo
 
 - **EXERANY2**: Whether the respondent did any physical activity (excluding work) in the past 30 days.  
   - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+<br><br>
 
-              
 #### 3) Research Interest
 We focus on the 2015 BRFSS dataset in this analysis for both practical and historical reasons. As BRFSS is a repeated annual survey, selecting a past year like 2015 allows us to lay the groundwork for decade-long comparisons with newer datasets, such as the 2025 BRFSS. Notably, more recent datasets have limitations in coverage. For example, the 2023 dataset lacks data from several large states, including Pennsylvania and Kentucky, potentially compromising the representativeness and completeness of national estimates.
 
@@ -62,7 +63,7 @@ In this project, we specifically focus on **heart attack** (variable: `CVDINFR4`
 - **Public health significance**: According to the CDC, heart attacks contribute to roughly one in every five deaths from cardiovascular disease in the U.S., emphasizing their impact on morbidity and mortality ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).
 
 By focusing on heart attacks, we aim to investigate behavioral and demographic risk factors associated with this critical health outcome and identify population groups that may benefit most from targeted interventions.
-
+<br><br>
 
 ### II. Dataset Manipulation
 
@@ -77,6 +78,7 @@ install.packages("pROC")
 install.packages("dplyr")
 ```
 We set up the environment and install the packages necessary for our data analyis below, relying on libraries for different functions and plotting mechanics that aren't available to us, without having to recreate them.
+<br><br>
 
 ```{r}
 # Load libraries
@@ -89,6 +91,8 @@ library(dplyr)
 ```
 
 We load all the installed packages above to make the functions within them avaialble to use in our script.
+<br><br>
+
 ```{r}
 #Load original dataset
 df <- read.csv("/Users/romzuckerman/Downloads/2015.csv")
@@ -103,6 +107,7 @@ df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_BMI5",
 At the end of our initial environment preparing section, we load our dataset into R Studio, while defining our relevant predictors (or independent variables), along with our dependent variable, for the folowing set of data analysis.
 
 This marks the end of the first chunk of code - initalizing and enviornment-defining. This chunk allows us to make sure that all of our data, functions, and relevant variables are ready to be used in other chunks that might call upon them for data analysis. By ensuring that each of these steps gets executed, we know that no matter where this code is run from, it will always have the same reliable and working enviornment to call upon.
+<br><br>
 
 #### 2) Recoding Variables
 
@@ -154,6 +159,7 @@ df1$EXERANY2 <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
 ```
 
 Before we can start working with the data, we must ensure the data is fit to our liking. Thus, we must restructure our variables and labels within the dataset to match what we want to look like. Here we change and reshape our predictors with the subsequent labels we want into the dataset we hope to use for graphing and linear regression analysis. By using the factor() function and specifying our own labels, we create a dataset that we fully know what is in it, and are prepared to write more code on it.
+<br><br>
 
 #### 3) Handling Missing Values
 Filtering out rows with N/A
@@ -167,6 +173,7 @@ write.csv(df_clean, "/Users/romzuckerman/Downloads/cleaned_data.csv", row.names 
 ```
 
 And in the last step of our dataset cleaning, we must ensure that none of our cleaned dataset has missing values in it, that would later cause a bug when graphing variables or running analysis on them. So we remove any rows within the dataset that might have missing values in it, and export the dataset into a CSV file for any future use we want with the now cleaned dataset.
+<br><br>
 
 ### III. Data Visualization and Tendency Measurement
 
@@ -183,7 +190,8 @@ get_mode <- function(v) {
 ```
 We create the function get_mode(), a function we will later use. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5]
  is inputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
- 
+<br><br>
+
 **(a)** Response Variable -- CVDINFR4
 ```{r}
 #table
@@ -225,6 +233,7 @@ cat("Sex\n")
 cat("Mode:", get_mode(df_clean$SEX), "\n\n")
 ```
 Similar to our previous plotting of the dependent response variable, CVDINFR4, here we begin to graph the distributions of Sex for patients of the study (to which this dataset was made from). We also calculate and list the Mode of the perdictor, using the get_mode function.
+<br><br>
 
 **(c)** Predictor -- Income
 ```{r}
@@ -251,6 +260,7 @@ cat("Median:", income_median_label, "\n")
 ```
 
 We continue with the same plotting mechanism we have for other perdictors, but now on Income. Additionally, after calulclating the mode for the perdictor, we also look at the median Income for the dataset of patients!
+<br><br>
 
 **(d)** Predictor -- Race
 ```{r}
@@ -269,6 +279,7 @@ ggplot(df_clean, aes(x = RACE)) +
 cat("Race\n")
 cat("Mode:", get_mode(df_clean$RACE), "\n\n")
 ```
+<br><br>
 
 **(e)** Predictor -- Age
 ```{r}
@@ -290,6 +301,7 @@ median_index <- median(as.numeric(df_clean$AGE), na.rm = TRUE)
 median_label <- levels(df_clean$AGE)[median_index]
 cat("Median:", median_label, "\n\n")
 ```
+<br><br>
 
 **(f)** Predictor -- BMI
 ```{r}
@@ -308,6 +320,7 @@ cat("Mean:", mean(df_clean$`X_BMI5`, na.rm = TRUE), "\n\n")
 ```
 
 We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
+<br><br>
 
 **(g)** Predictor -- Blood Pressure
 ```{r}
@@ -326,8 +339,9 @@ ggplot(df_clean, aes(x = BPHIGH4)) +
 cat("Blood_Pressure\n")
 cat("Mode:", get_mode(df_clean$BPHIGH4), "\n\n")
 ```
+<br><br>
 
-**(g)** Predictor -- Healthcare Coverage
+**(h)** Predictor -- Healthcare Coverage
 ```{r}
 #table
 table(df_clean$HLTHPLN1)
@@ -344,8 +358,9 @@ ggplot(df_clean, aes(x = HLTHPLN1)) +
 cat("Healthcare_Coverage\n")
 cat("Mode:", get_mode(df_clean$HLTHPLN1), "\n\n")
 ```
+<br><br>
 
-**(h)** Predictor -- EXERANY2
+**(i)** Predictor -- EXERANY2
 ```{r}
 #table
 table(df_clean$EXERANY2)
