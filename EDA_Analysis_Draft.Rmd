@@ -116,19 +116,19 @@ df1$SEX <- factor(df1$SEX, levels = c(1, 2), labels = c("Male", "Female"))
 
 # Recode INCOME2
 df1$INCOME2[df1$INCOME2 %in% c(77, 99)] <- NA
-df1$INCOME2 <- factor(df1$INCOME2, levels = c(1:8),
+df1$INCOME <- factor(df1$INCOME2, levels = c(1:8),
                       labels = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k",
                                  "$35-50k", "$50-75k", ">=75k"))
 
 # Recode _RACEGR3 as factor with appropriate labels
-df1$RACEGR3 <- factor(df1$`X_RACEGR3`,
+df1$RACE <- factor(df1$`X_RACEGR3`,
                          levels = c(1, 2, 3, 4, 5, 6, 7, 9),
                          labels = c("White", "Black", "Asian",
                                     "NH/PI", "AI/AN", "Other",
                                     "Multiracial", NA))
 
 # Recode _AGEG5YR
-df1$AGEG5YR <- factor(df1$`X_AGEG5YR`, levels = 1:13,
+df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
                          labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49",
                                     "50–54", "55–59", "60–64", "65–69", "70–74", "75–79", "80+"))
 
@@ -229,11 +229,11 @@ Similar to our previous plotting of the dependent response variable, CVDINFR4, h
 **(c)** Predictor -- Income
 ```{r}
 #table
-table(df_clean$INCOME2)
-prop.table(table(df_clean$INCOME2))
+table(df_clean$INCOME)
+prop.table(table(df_clean$INCOME))
 
 #Bar graph
-ggplot(df_clean, aes(x = INCOME2)) +
+ggplot(df_clean, aes(x = INCOME)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Income Distribution") +
   theme_minimal() +
@@ -241,11 +241,11 @@ ggplot(df_clean, aes(x = INCOME2)) +
 
 #Central Tendency -- Mode and Median
 cat("Income\n")
-cat("Mode:", get_mode(df_clean$INCOME2), "\n")
+cat("Mode:", get_mode(df_clean$INCOME), "\n")
 
 # Median (convert to numeric index and retrieve label)
-income_numeric <- as.numeric(df_clean$INCOME2)
-income_levels <- levels(df_clean$INCOME2)
+income_numeric <- as.numeric(df_clean$INCOME)
+income_levels <- levels(df_clean$INCOME)
 income_median_label <- income_levels[median(income_numeric, na.rm = TRUE)]
 cat("Median:", income_median_label, "\n")
 ```
@@ -255,11 +255,11 @@ We continue with the same plotting mechanism we have for other perdictors, but n
 **(d)** Predictor -- Race
 ```{r}
 #table
-table(df_clean$RACEGR3)
-prop.table(table(df_clean$RACEGR3))
+table(df_clean$RACE)
+prop.table(table(df_clean$RACE))
 
 #Bar graph
-ggplot(df_clean, aes(x = RACEGR3)) +
+ggplot(df_clean, aes(x = RACE)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Race Distribution") +
   theme_minimal() +
@@ -267,27 +267,27 @@ ggplot(df_clean, aes(x = RACEGR3)) +
 
 #Central Tendency -- Mode
 cat("Race\n")
-cat("Mode:", get_mode(df_clean$RACEGR3), "\n\n")
+cat("Mode:", get_mode(df_clean$RACE), "\n\n")
 ```
 
 **(e)** Predictor -- Age
 ```{r}
 #table
-table(df_clean$AGEG5YR)
-prop.table(table(df_clean$AGEG5YR))
+table(df_clean$AGE)
+prop.table(table(df_clean$AGE))
 
 #Bar graph
-ggplot(df_clean, aes(x = AGEG5YR)) +
+ggplot(df_clean, aes(x = AGE)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Age Distribution") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #Central Tendency -- Mode and Median
-cat("AGEG5YR\n")
-cat("Mode:", get_mode(df_clean$AGEG5YR), "\n")
-median_index <- median(as.numeric(df_clean$AGEG5YR), na.rm = TRUE)
-median_label <- levels(df_clean$AGEG5YR)[median_index]
+cat("AGE\n")
+cat("Mode:", get_mode(df_clean$AGE), "\n")
+median_index <- median(as.numeric(df_clean$AGE), na.rm = TRUE)
+median_label <- levels(df_clean$AGE)[median_index]
 cat("Median:", median_label, "\n\n")
 ```
 
