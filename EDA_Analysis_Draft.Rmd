@@ -95,7 +95,7 @@ We load all the installed packages above to make the functions within them avaia
 
 ```{r}
 #Load original dataset
-df <- read.csv("/Users/romzuckerman/Downloads/2015.csv")
+df <- read.csv("~/Documents/GitHub/EDA_Project/data/2015.csv")
 ```
 
 ```{r}
@@ -139,23 +139,24 @@ df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
 
 # Recode _BMI5 
 df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
+names(df1)[names(df1) == "X_BMI5"] <- "BMI_Num"
 
 # Recode _BMI5CAT
-df1$BMI5CAT <- factor(df1$`X_BMI5CAT`, levels = 1:4,
+df1$BMI_Cat <- factor(df1$`X_BMI5CAT`, levels = 1:4,
                          labels = c("Underweight", "Normal", "Overweight", "Obese"))
 
 # Recode BPHIGH4
 df1$BPHIGH4[df1$BPHIGH4 %in% c(7, 9)] <- NA
-df1$BPHIGH4 <- factor(df1$BPHIGH4, levels = c(1, 2, 3, 4),
+df1$BloodPressure <- factor(df1$BPHIGH4, levels = c(1, 2, 3, 4),
                       labels = c("Yes", "No", "Borderline", "Pregnancy"))
 
 # Recode HLTHPLN1
 df1$HLTHPLN1[df1$HLTHPLN1 %in% c(7, 9)] <- NA
-df1$HLTHPLN1 <- factor(df1$HLTHPLN1, levels = c(1, 2), labels = c("Yes", "No"))
+df1$HealthCare <- factor(df1$HLTHPLN1, levels = c(1, 2), labels = c("Yes", "No"))
 
 # Recode EXERANY2
 df1$EXERANY2[df1$EXERANY2 %in% c(7, 9)] <- NA
-df1$EXERANY2 <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
+df1$Exercise <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
 ```
 
 Before we can start working with the data, we must ensure the data is fit to our liking. Thus, we must restructure our variables and labels within the dataset to match what we want to look like. Here we change and reshape our predictors with the subsequent labels we want into the dataset we hope to use for graphing and linear regression analysis. By using the factor() function and specifying our own labels, we create a dataset that we fully know what is in it, and are prepared to write more code on it.
@@ -169,7 +170,7 @@ df_clean <- na.omit(df1)
 nrow(df_clean)
 
 #save cleaned files into csv
-write.csv(df_clean, "/Users/romzuckerman/Downloads/cleaned_data.csv", row.names = FALSE)
+write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.names = FALSE)
 ```
 
 And in the last step of our dataset cleaning, we must ensure that none of our cleaned dataset has missing values in it, that would later cause a bug when graphing variables or running analysis on them. So we remove any rows within the dataset that might have missing values in it, and export the dataset into a CSV file for any future use we want with the now cleaned dataset.
@@ -306,17 +307,17 @@ cat("Median:", median_label, "\n\n")
 **(f)** Predictor -- BMI
 ```{r}
 #Bar graph
-ggplot(df_clean, aes(x = X_BMI5)) +
+ggplot(df_clean, aes(x = BMI_Num)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of BMI Distribution") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #Central Tendency -- Mode and Median and Mean
-cat("_BMI5\n")
-cat("Mode:", get_mode(df_clean$`X_BMI5`), "\n")
-cat("Median:", median(df_clean$`X_BMI5`, na.rm = TRUE), "\n")
-cat("Mean:", mean(df_clean$`X_BMI5`, na.rm = TRUE), "\n\n")
+cat("BMI_Num\n")
+cat("Mode:", get_mode(df_clean$BMI_Num), "\n")
+cat("Median:", median(df_clean$BMI_Num, na.rm = TRUE), "\n")
+cat("Mean:", mean(df_clean$BMI_Num, na.rm = TRUE), "\n\n")
 ```
 
 We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
@@ -325,11 +326,11 @@ We continue to plot and graph the distributions of these different perdictors, b
 **(g)** Predictor -- Blood Pressure
 ```{r}
 #table
-table(df_clean$BPHIGH4)
-prop.table(table(df_clean$BPHIGH4))
+table(df_clean$BloodPressure)
+prop.table(table(df_clean$BloodPressure))
 
 #Bar graph
-ggplot(df_clean, aes(x = BPHIGH4)) +
+ggplot(df_clean, aes(x = BloodPressure)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Blood Pressure Distribution") +
   theme_minimal() +
@@ -337,18 +338,18 @@ ggplot(df_clean, aes(x = BPHIGH4)) +
 
 #Central Tendency -- Mode
 cat("Blood_Pressure\n")
-cat("Mode:", get_mode(df_clean$BPHIGH4), "\n\n")
+cat("Mode:", get_mode(df_clean$BloodPressure), "\n\n")
 ```
 <br><br>
 
 **(h)** Predictor -- Healthcare Coverage
 ```{r}
 #table
-table(df_clean$HLTHPLN1)
-prop.table(table(df_clean$HLTHPLN1))
+table(df_clean$HealthCare)
+prop.table(table(df_clean$HealthCare))
 
 #Bar graph
-ggplot(df_clean, aes(x = HLTHPLN1)) +
+ggplot(df_clean, aes(x = HealthCare)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Healthcare Coverage Distribution") +
   theme_minimal() +
@@ -356,18 +357,18 @@ ggplot(df_clean, aes(x = HLTHPLN1)) +
 
 #Central Tendency -- Mode
 cat("Healthcare_Coverage\n")
-cat("Mode:", get_mode(df_clean$HLTHPLN1), "\n\n")
+cat("Mode:", get_mode(df_clean$HealthCare), "\n\n")
 ```
 <br><br>
 
 **(i)** Predictor -- EXERANY2
 ```{r}
 #table
-table(df_clean$EXERANY2)
-prop.table(table(df_clean$EXERANY2))
+table(df_clean$Exercise)
+prop.table(table(df_clean$Exercise))
 
 #Bar graph
-ggplot(df_clean, aes(x = EXERANY2)) +
+ggplot(df_clean, aes(x = Exercise)) +
   geom_bar(fill = "#1a80bb", color = "black") +
   ggtitle("Bar Plot of Exercise Distribution") +
   theme_minimal() +
@@ -375,7 +376,7 @@ ggplot(df_clean, aes(x = EXERANY2)) +
 
 #Central Tendency -- Mode
 cat("Exercise\n")
-cat("Mode:", get_mode(df_clean$EXERANY2), "\n\n")
+cat("Mode:", get_mode(df_clean$Exercise), "\n\n")
 ```
 
 
