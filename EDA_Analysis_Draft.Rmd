@@ -378,6 +378,126 @@ ggplot(df_clean, aes(x = Exercise)) +
 cat("Exercise\n")
 cat("Mode:", get_mode(df_clean$Exercise), "\n\n")
 ```
+<br><br>
+
+#### 2) Correlation Analysis
+
+Define colors for bar graphs
+```{r}
+custom_colors <- c("No" = "#1a80bb", "Yes" = "#f2c45f")
+```
 
 
+**(a)** Heart Attack vs. Sex
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$SEX), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = SEX, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Sex") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Sex") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**(b)** Heart Attack vs. Income Level
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$INCOME), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = INCOME, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Income Level") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Income Level") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+**(c)** Heart Attack vs. Race
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$RACE), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Race") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Race") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**(d)** Heart Attack vs. Age
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$AGE), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Age") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Age") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**(e)** Heart Attack vs. Blood Pressure
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$BloodPressure), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = BloodPressure, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Blood Pressure") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Blood Pressure Level") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**(f)** Heart Attack vs. Healthcare Coverage
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$HealthCare), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = HealthCare, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Healthcare Coverage") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Healthcare Coverage") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**(g)** Heart Attack vs. Exercise
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$Exercise), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = Exercise, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("Exercise") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by Exercise Level") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
