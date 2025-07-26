@@ -2,7 +2,12 @@
 title: "EDA Notebook Analysis"
 output: html_document
 date: "2025-07-17"
+Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 ---
+### Heart Attack Exploratory Data Analysis
+
+**Team Members**: Yumeng Tan, Sherelle Li, Rom Zuckerman
+
 ### I. INTRODUCTION:
 #### 1) Introducing the Dataset
 The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Surveillance System (BRFSS)—a nationwide health survey conducted by the Centers for Disease Control and Prevention (CDC) in collaboration with U.S. states and territories. For simplicity, we will refer to it as BRFSS throughout the analysis. Data are collected annually through telephone interviews, both landline and cellular, targeting adults aged 18 and older living in noninstitutionalized, community-based settings.
@@ -180,7 +185,8 @@ And in the last step of our dataset cleaning, we must ensure that none of our cl
 
 #### 1) Frequency Distribution of Heart Attack and Predictors
 
-Define Mode Functions for central tendency measurement
+**Define Mode Functions for central tendency measurement**: We create the function get_mode(), a function we will later use. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5] is inputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
+
 ```{r}
 # Function to calculate mode
 get_mode <- function(v) {
@@ -189,11 +195,13 @@ get_mode <- function(v) {
   return(mode_val)
 }
 ```
-We create the function get_mode(), a function we will later use. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5]
- is inputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
+
 <br><br>
 
 **(a)** Response Variable -- CVDINFR4
+
+We now use our clean dataset and the dependent response variable CVDINFR4 to create a bar plot of how CVDINFR4 is distributed over the values. We also call our previous defined function get_mode() on the row of CVDINFR4 in our clean dataset to show the mode (or value of highest frequency) for the dependent response variable! 
+
 ```{r}
 #table
 table(df_clean$HeartAttack)
@@ -210,8 +218,6 @@ ggplot(df_clean, aes(x = HeartAttack)) +
 cat("Head_Attack\n")
 cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 ```
-
-We now use our clean dataset and the dependent response variable CVDINFR4 to create a bar plot of how CVDINFR4 is distributed over the values. We also call our previous defined function get_mode() on the row of CVDINFR4 in our clean dataset to show the mode (or value of highest frequency) for the dependent response variable! 
 
 **Conclusion**: Based on the mode calcularion, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
 <br><br>
@@ -237,6 +243,9 @@ Similar to our previous plotting of the dependent response variable, CVDINFR4, h
 <br><br>
 
 **(c)** Predictor -- Income
+
+We continue with the same plotting mechanism we have for other perdictors, but now on Income. Additionally, after calculating the mode for the perdictor, we also look at the median Income for the dataset of patients.
+
 ```{r}
 #table
 table(df_clean$INCOME)
@@ -260,7 +269,6 @@ income_median_label <- income_levels[median(income_numeric, na.rm = TRUE)]
 cat("Median:", income_median_label, "\n")
 ```
 
-We continue with the same plotting mechanism we have for other perdictors, but now on Income. Additionally, after calulclating the mode for the perdictor, we also look at the median Income for the dataset of patients!
 <br><br>
 
 **(d)** Predictor -- Race
@@ -305,6 +313,9 @@ cat("Median:", median_label, "\n\n")
 <br><br>
 
 **(f)** Predictor -- BMI
+
+We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
+
 ```{r}
 #Bar graph
 ggplot(df_clean, aes(x = BMI_Num)) +
@@ -320,7 +331,7 @@ cat("Median:", median(df_clean$BMI_Num, na.rm = TRUE), "\n")
 cat("Mean:", mean(df_clean$BMI_Num, na.rm = TRUE), "\n\n")
 ```
 
-We continue to plot and graph the distributions of these different perdictors, but instead of simply calculataing mode and median, we add a calculation for mean of BMI, using a function from one of the libraries we installed and initialized earlier in the function - mean().
+
 <br><br>
 
 **(g)** Predictor -- Blood Pressure
@@ -404,6 +415,9 @@ ggplot(df_clean, aes(x = SEX, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: Based on the proportion and bar graph, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. 
+<br><br>
+
 **(b)** Heart Attack vs. Income Level
 ```{r}
 #Table
@@ -420,6 +434,8 @@ ggplot(df_clean, aes(x = INCOME, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: Generally, the proportion of individuals having heart attack decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. 
+<br><br>
 
 **(c)** Heart Attack vs. Race
 ```{r}
