@@ -219,7 +219,7 @@ cat("Head_Attack\n")
 cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 ```
 
-**Conclusion**: Based on the mode calcularion, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
+**Conclusion**: Based on the mode calculation, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
 <br><br>
 
 **(b)** Predictor -- Sex
@@ -469,7 +469,24 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**(e)** Heart Attack vs. Blood Pressure
+**(e)** Heart Attack vs. BMI Categories
+```{r}
+#Table
+prop.table(table(df_clean$HeartAttack, df_clean$BMI_Cat), margin = 2)
+
+#Bar graph
+ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
+  geom_bar(position = "fill") +
+  ylab("Proportion") +
+  xlab("BMI") +
+  labs(fill = "Heart Attack Status") +
+  ggtitle("Proportion of Heart Attack by BMI Level") +
+  scale_fill_manual(values = custom_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+**(f)** Heart Attack vs. Blood Pressure
 ```{r}
 #Table
 prop.table(table(df_clean$HeartAttack, df_clean$BloodPressure), margin = 2)
@@ -485,7 +502,7 @@ ggplot(df_clean, aes(x = BloodPressure, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**(f)** Heart Attack vs. Healthcare Coverage
+**(g)** Heart Attack vs. Healthcare Coverage
 ```{r}
 #Table
 prop.table(table(df_clean$HeartAttack, df_clean$HealthCare), margin = 2)
@@ -501,7 +518,7 @@ ggplot(df_clean, aes(x = HealthCare, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**(g)** Heart Attack vs. Exercise
+**(h)** Heart Attack vs. Exercise
 ```{r}
 #Table
 prop.table(table(df_clean$HeartAttack, df_clean$Exercise), margin = 2)
