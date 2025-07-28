@@ -9,70 +9,75 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 **Team Members**: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 ### I. INTRODUCTION:
+
 #### 1) Introducing the Dataset
-The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Surveillance System (BRFSS)—a nationwide health survey conducted by the Centers for Disease Control and Prevention (CDC) in collaboration with U.S. states and territories. For simplicity, we will refer to it as BRFSS throughout the analysis. Data are collected annually through telephone interviews, both landline and cellular, targeting adults aged 18 and older living in noninstitutionalized, community-based settings.
 
-The primary objective of BRFSS is to monitor health-related risk behaviors, chronic conditions, and use of preventive services across the U.S. population. In 2015, the survey was administered in all 50 states, the District of Columbia, Puerto Rico, and Guam—producing one of the most comprehensive public datasets on health behaviors. The data are weighted to reflect state-level populations and are widely used by public health officials to guide policy decisions, allocate resources, and track trends over time.
+  The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Surveillance System (BRFSS)—a nationwide health survey conducted by the Centers for Disease Control and Prevention (CDC) in collaboration with U.S. states and territories. For simplicity, we will refer to it as BRFSS throughout the analysis. The 2015 BRFSS includes 330 columns and 441,456 observations. Data are collected annually through telephone interviews, both landline and cellular, targeting adults aged 18 and older living in noninstitutionalized, community-based settings.
 
-From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respondent confidentiality. All data are fully de-identified prior to public release and reported only at the aggregate level. Although the dataset is exempt from formal Institutional Review Board (IRB) oversight due to its public and anonymized nature, we strive to approach the analysis with care to avoid misinterpretation or overgeneralization, particularly when examining outcomes for vulnerable or underrepresented populations.
+  The primary objective of BRFSS is to monitor health-related risk behaviors, chronic conditions, and use of preventive services across the U.S. population. In 2015, the survey was administered in all 50 states, the District of Columbia, Puerto Rico, and Guam—producing one of the most comprehensive public datasets on health behaviors. The data are weighted to reflect state-level populations and are widely used by public health officials to guide policy decisions, allocate resources, and track trends over time. 
+
+  From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respondent confidentiality. All data are fully de-identified prior to public release and reported only at the aggregate level. Although the dataset is exempt from formal Institutional Review Board (IRB) oversight due to its public and anonymized nature, we strive to approach the analysis with care to avoid misinterpretation or overgeneralization, particularly when examining outcomes for vulnerable or underrepresented populations.
 <br><br>
 
 #### 2) Description of Selected Variables
 
-- **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
-  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+- **HeartAttack**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
+  - 1 = Yes - 2 = No   
 
 - **SEX**: Biological sex of the respondent.  
   - 1 = Male - 2 = Female  
 
-- **INCOME2**: Annual household income from all sources, in categorical brackets.  
-  - 1–8 = Ranges from < $10,000 to ≥ $75,000 - 77 = Don’t know - 99 = Refused  
+- **INCOME**: Annual household income from all sources, in categorical brackets.  
+  - 1–8 = Ranges from < $10,000 to ≥ $75,000  
 
-- **X_RACEGR3**: Race group (recoded into 3 categories).  
+- **RACE**: Race group (recoded into 3 categories).  
   - 1 = White only - 2 = Black only - 3 = Other or multiracial  
 
-- **X_AGEG5YR**: Age group in 5-year intervals.  
+- **AGE**: Age group in 5-year intervals.  
   - 1 = 18–24 - 2 = 25–29 - ... - 13 = 80+  
 
-- **X_BMI5**: Body Mass Index (BMI), calculated as BMI × 100.  
+- **BMI_Num**: Body Mass Index (BMI), calculated as BMI × 100.  
   - Continuous variable: Divide by 100 to get actual BMI  
 
-- **X_BMI5CAT**: BMI category based on X_BMI5.  
+- **BMI_Cat**: BMI category based on X_BMI5.  
   - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
 
-- **BPHIGH4**: Ever told by a health professional that they have high blood pressure.  
-  - 1 = Yes - 2 = Yes, only during pregnancy - 3 = No - 4 = Borderline/pre-hypertensive - 7 = Don’t know - 9 = Refused  
+- **BloodPressure**: Ever told by a health professional that they have high blood pressure.  
+  - 1 = Yes - 2 = Yes, only during pregnancy - 3 = No - 4 = Borderline/pre-hypertensive
 
-- **HLTHPLN1**: Whether respondent currently has any health care coverage.  
-  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+- **HealthCare**: Whether respondent currently has any health care coverage.  
+  - 1 = Yes - 2 = No 
 
-- **EXERANY2**: Whether the respondent did any physical activity (excluding work) in the past 30 days.  
-  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
+- **Exercise**: Whether the respondent did any physical activity (excluding work) in the past 30 days.  
+  - 1 = Yes - 2 = No  
 <br><br>
 
 #### 3) Research Interest
-We focus on the 2015 BRFSS dataset in this analysis for both practical and historical reasons. As BRFSS is a repeated annual survey, selecting a past year like 2015 allows us to lay the groundwork for decade-long comparisons with newer datasets, such as the 2025 BRFSS. Notably, more recent datasets have limitations in coverage. For example, the 2023 dataset lacks data from several large states, including Pennsylvania and Kentucky, potentially compromising the representativeness and completeness of national estimates.
 
-In addition, BRFSS datasets from 2016 onward has been modified to comply with Trump executive orders, including adjustments in how federal health agencies presented and coded data—especially regarding race, ethnicity, and health equity. While some of these changes aimed to improve data transparency, and alignment with federal guidelines, they also introduced inconsistencies in demographic variables that can complicate subgroup comparisons and make patterns harder to interpret.
+  We focus on the 2015 BRFSS dataset ([BRFSS 2015 Dataset](https://www.kaggle.com/datasets/cdc/behavioral-risk-factor-surveillance-system/data) in this analysis for both practical and historical reasons. As BRFSS is a repeated annual survey, selecting a past year like 2015 allows us to lay the groundwork for decade-long comparisons with newer datasets, such as the 2025 BRFSS. Notably, more recent datasets have limitations in coverage. For example, the 2023 dataset lacks data from several large states, including Pennsylvania and Kentucky, potentially compromising the representativeness and completeness of national estimates.
 
-By contrast, the 2015 dataset offers a more stable and widely used structure, making it easier to replicate established methods and ensure interpretability. It also predates politically motivated changes in public health messaging, which is important when exploring socially sensitive outcomes like cardiovascular disease risk across race and income groups.
+  In addition, BRFSS datasets from 2016 onward has been modified to comply with Trump executive orders, including adjustments in how federal health agencies presented and coded data—especially regarding race, ethnicity, and health equity. While some of these changes aimed to improve data transparency, and alignment with federal guidelines, they also introduced inconsistencies in demographic variables that can complicate subgroup comparisons and make patterns harder to interpret.
 
-In this project, we specifically focus on **heart attack** (variable: `CVDINFR4`) as the response variable, rather than broader cardiovascular conditions such as **angina or coronary heart disease** (`CVDCRHD4`). This decision is based on several factors:
+  By contrast, the 2015 dataset offers a more stable and widely used structure, making it easier to replicate established methods and ensure interpretability. It also predates politically motivated changes in public health messaging, which is important when exploring socially sensitive outcomes like cardiovascular disease risk across race and income groups.
+
+  In this project, we specifically focus on **heart attack** (variable: `CVDINFR4`) as the response variable, rather than broader cardiovascular conditions such as **angina or coronary heart disease** (`CVDCRHD4`). This decision is based on several factors:
 
 - **Higher prevalence**: In the 2015 dataset, there are more reported cases of heart attack than angina or CHD, giving us more statistical power.
 
-- **Clinical severity**: Heart attacks are typically more immediately life-threatening and often require urgent medical care, making them a strong marker of cardiovascular crisis.
+- **Clinical severity**: Heart attacks are typically more immediately life-threatening and often require urgent medical care, making them a strong marker of cardiovascular crisis.([NIH](https://www.nhlbi.nih.gov/health/heart-attack)).
 
-- **Distinct diagnosis**: It is possible to experience a heart attack without a prior diagnosis of coronary heart disease, so using heart attack as a primary outcome helps avoid selection bias based on access to preventive diagnostics.
+* **Distinct diagnosis**: It is possible to experience a heart attack without a prior diagnosis of coronary heart disease, so using heart attack as a primary outcome helps avoid selection bias based on access to preventive diagnostics ([Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)).
 
 - **Public health significance**: According to the CDC, heart attacks contribute to roughly one in every five deaths from cardiovascular disease in the U.S., emphasizing their impact on morbidity and mortality ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).
 
-By focusing on heart attacks, we aim to investigate behavioral and demographic risk factors associated with this critical health outcome and identify population groups that may benefit most from targeted interventions.
+  By focusing on heart attacks, we aim to investigate behavioral and demographic risk factors associated with this critical health outcome and identify population groups that may benefit most from targeted interventions.
 <br><br>
 
 ### II. Dataset Manipulation
 
 #### 1) Selecting Response Variables and Predictors
+
+We set up the environment and install the packages necessary for our data analyis below, relying on libraries for different functions and plotting mechanics that aren't available to us, without having to recreate them.
 
 ```{r}
 install.packages("ggplot2")
@@ -82,8 +87,9 @@ install.packages("ResourceSelection")
 install.packages("pROC")
 install.packages("dplyr")
 ```
-We set up the environment and install the packages necessary for our data analyis below, relying on libraries for different functions and plotting mechanics that aren't available to us, without having to recreate them.
 <br><br>
+
+We load all the installed packages above to make the functions within them avaialble to use in our script.
 
 ```{r}
 # Load libraries
@@ -94,9 +100,9 @@ library(ResourceSelection)
 library(pROC)
 library(dplyr)
 ```
-
-We load all the installed packages above to make the functions within them avaialble to use in our script.
 <br><br>
+
+At the end of our initial environment preparing section, we load our dataset into R Studio, while defining our relevant predictors (or independent variables), along with our dependent variable, for the following set of data analysis.
 
 ```{r}
 #Load original dataset
@@ -109,12 +115,12 @@ df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_BMI5",
               "X_BMI5CAT", "BPHIGH4", "HLTHPLN1", "EXERANY2")]
 ```
 
-At the end of our initial environment preparing section, we load our dataset into R Studio, while defining our relevant predictors (or independent variables), along with our dependent variable, for the folowing set of data analysis.
-
-This marks the end of the first chunk of code - initalizing and enviornment-defining. This chunk allows us to make sure that all of our data, functions, and relevant variables are ready to be used in other chunks that might call upon them for data analysis. By ensuring that each of these steps gets executed, we know that no matter where this code is run from, it will always have the same reliable and working enviornment to call upon.
+This marks the end of the first chunk of code - initializing and environment-defining. This chunk allows us to make sure that all of our data, functions, and relevant variables are ready to be used in other chunks that might call upon them for data analysis. By ensuring that each of these steps gets executed, we know that no matter where this code is run from, it will always have the same reliable and working environment to call upon.
 <br><br>
 
 #### 2) Recoding Variables
+
+Before we can start working with the data, we must ensure the data is fit to our liking. Thus, we must restructure our variables and labels within the dataset to match what we want to look like. Here we change and reshape our predictors with the subsequent labels we want into the dataset we hope to use for graphing and linear regression analysis. By using the factor() function and specifying our own labels, we create a dataset that we fully know what is in it, and are prepared to write more code on it.
 
 ```{r}
 # Recode CVDINFR4
@@ -131,11 +137,12 @@ df1$INCOME <- factor(df1$INCOME2, levels = c(1:8),
                                  "$35-50k", "$50-75k", ">=75k"))
 
 # Recode _RACEGR3 as factor with appropriate labels
+df1$`X_RACEGR3`[df1$`X_RACEGR3` == 9] <- NA
 df1$RACE <- factor(df1$`X_RACEGR3`,
-                         levels = c(1, 2, 3, 4, 5, 6, 7, 9),
+                         levels = c(1:7),
                          labels = c("White", "Black", "Asian",
                                     "NH/PI", "AI/AN", "Other",
-                                    "Multiracial", NA))
+                                    "Multiracial"))
 
 # Recode _AGEG5YR
 df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
@@ -164,11 +171,12 @@ df1$EXERANY2[df1$EXERANY2 %in% c(7, 9)] <- NA
 df1$Exercise <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
 ```
 
-Before we can start working with the data, we must ensure the data is fit to our liking. Thus, we must restructure our variables and labels within the dataset to match what we want to look like. Here we change and reshape our predictors with the subsequent labels we want into the dataset we hope to use for graphing and linear regression analysis. By using the factor() function and specifying our own labels, we create a dataset that we fully know what is in it, and are prepared to write more code on it.
 <br><br>
 
 #### 3) Handling Missing Values
-Filtering out rows with N/A
+
+**Filtering out rows with N/A**: In the last step of our dataset cleaning, we must ensure that none of our cleaned dataset has missing values in it, that would later cause a bug when graphing variables or running analysis on them. So we remove any rows within the dataset that might have missing values in it, and export the dataset into a CSV file for any future use we want with the now cleaned dataset.
+
 ```{r}
 # Remove rows with any NA values
 df_clean <- na.omit(df1)  
@@ -178,7 +186,6 @@ nrow(df_clean)
 write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.names = FALSE)
 ```
 
-And in the last step of our dataset cleaning, we must ensure that none of our cleaned dataset has missing values in it, that would later cause a bug when graphing variables or running analysis on them. So we remove any rows within the dataset that might have missing values in it, and export the dataset into a CSV file for any future use we want with the now cleaned dataset.
 <br><br>
 
 ### III. Data Visualization and Tendency Measurement
@@ -223,6 +230,9 @@ cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 <br><br>
 
 **(b)** Predictor -- Sex
+
+Similar to our previous plotting of the dependent response variable, CVDINFR4, here we begin to graph the distributions of Sex for patients of the study (to which this dataset was made from). We also calculate and list the Mode of the perdictor, using the get_mode function.
+
 ```{r}
 #table
 table(df_clean$SEX)
@@ -239,7 +249,8 @@ ggplot(df_clean, aes(x = SEX)) +
 cat("Sex\n")
 cat("Mode:", get_mode(df_clean$SEX), "\n\n")
 ```
-Similar to our previous plotting of the dependent response variable, CVDINFR4, here we begin to graph the distributions of Sex for patients of the study (to which this dataset was made from). We also calculate and list the Mode of the perdictor, using the get_mode function.
+
+**Conclusion**: We found that this Bernoulli distribution slightly leans more towards the female sex for this research database and subject study. This is something notable to consider when looking at other results from distributions and linear regression, as the subject's sex isn't evenly distributed, rather leaning more towards a higher count of female participants than of the male sex.
 <br><br>
 
 **(c)** Predictor -- Income
@@ -269,6 +280,7 @@ income_median_label <- income_levels[median(income_numeric, na.rm = TRUE)]
 cat("Median:", income_median_label, "\n")
 ```
 
+**Conclusion**: The Income distribution seems to be an inverse exponential distribution, with most subjects (or the mode) belonging to the income group of over 75 thousand dollars in income per year. When looking at the mean that we calculated earlier, we can see that its results in 35-50k which makes sense when looking at the distribution itself. This means that we have a lot more subjects that had a higher income value than other income groups, which should be noted when looking at other peices of data in this project, as a higher income will allow for greater access to quality healthcare and insuarance.
 <br><br>
 
 **(d)** Predictor -- Race
@@ -288,6 +300,8 @@ ggplot(df_clean, aes(x = RACE)) +
 cat("Race\n")
 cat("Mode:", get_mode(df_clean$RACE), "\n\n")
 ```
+
+**Conclusion**: When looking at the predictor of Race, the distribution also appears to be a unimodal exponential distribution, with the mode of the data belonging to the race group of "White". This distribution also tells us to be weary for the other parts of our study, as there isn't a proportionate distribution of all groups, which limits the results of our findings to other groups of the predictor.
 <br><br>
 
 **(e)** Predictor -- Age
@@ -310,6 +324,8 @@ median_index <- median(as.numeric(df_clean$AGE), na.rm = TRUE)
 median_label <- levels(df_clean$AGE)[median_index]
 cat("Median:", median_label, "\n\n")
 ```
+
+**Conclusion**: This Age distribution resembles that of a Poission distribution, which while more skwered to older ages with a median of 55-59, has a better distribution of all ages from 18 to 81+. This makes our results much more comprehensive for ages across our range, but with a noticable skew towards older ages, which should be noted when looking at other results.
 <br><br>
 
 **(f)** Predictor -- BMI
@@ -331,7 +347,7 @@ cat("Median:", median(df_clean$BMI_Num, na.rm = TRUE), "\n")
 cat("Mean:", mean(df_clean$BMI_Num, na.rm = TRUE), "\n\n")
 ```
 
-
+**Conclusion**: We find that this distrubtion matches that of a binomial distribution, with a large tail that stretches towards the higher BMI values. This means that we have a very comprehensive distribution for the lower BMI values, but due to the large tail and few values at the higher end of range, our statistics such as mean and median are being skewed to the right. 
 <br><br>
 
 **(g)** Predictor -- Blood Pressure
@@ -351,6 +367,8 @@ ggplot(df_clean, aes(x = BloodPressure)) +
 cat("Blood_Pressure\n")
 cat("Mode:", get_mode(df_clean$BloodPressure), "\n\n")
 ```
+
+**Conclusion**: This distribution matches that of a Bernuolli distribution, but with more options that are being displayed in the graph rather than the typical two. There is an overwhelming more proportion of subjects that picked the category "Yes", but the mode still is "Borderline", which means that while we do not have many subjects that are in the "No" category, there are a lot in-between that might tip the distribution to be more equal than we initially thought.
 <br><br>
 
 **(h)** Predictor -- Healthcare Coverage
@@ -370,6 +388,8 @@ ggplot(df_clean, aes(x = HealthCare)) +
 cat("Healthcare_Coverage\n")
 cat("Mode:", get_mode(df_clean$HealthCare), "\n\n")
 ```
+
+**Conclusion**: This is a simple Bernoulli distribution, with a skewed distribution towards "Yes". This is another thing to take note of when we do further data analysis later on, in which the "No" cateogry is not fairly represented in this database, which can very well skew results.
 <br><br>
 
 **(i)** Predictor -- EXERANY2
@@ -389,6 +409,8 @@ ggplot(df_clean, aes(x = Exercise)) +
 cat("Exercise\n")
 cat("Mode:", get_mode(df_clean$Exercise), "\n\n")
 ```
+
+**Conclusion**: And lastly,the Excercise perdictor is also a simple Bernoulli distribution, with a skewed distribution towards "Yes". This is another thing to take note of when we do further data analysis later on, in which the "No" cateogry is not fairly represented in this database, which can very well skew results. This means that most of our subjects in the database do excericse, which can drastically impact the results we find.
 <br><br>
 
 #### 2) Correlation Analysis
@@ -453,6 +475,9 @@ ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: When looking at the bar plot we made, we do not see a noticeable change between the different catgeories of the Race predictor and the proportion of those who said yes to having a heart attack. This however could be skewed, as when looking at the Race predictor's distribution, we see a very skewed and uneven distribution of participants, with lots of missing datapoints for different catgeories.
+<br><br>
+
 **(d)** Heart Attack vs. Age
 ```{r}
 #Table
@@ -468,6 +493,9 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+**Conclusion**: Here we see a very exponential correlation between Age and the proportion of heart attacks. As the ages get higher and higher, so does the proportion of participants who noted that they did have a heart attack, rising exponentially within the older ages at the end of our sample range.
+<br><br>
 
 **(e)** Heart Attack vs. BMI Categories
 ```{r}
@@ -485,6 +513,8 @@ ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: Very interestingly, we do not see much of a difference in poportions of heart attacks across the different categories of BMI. It should be noted that the BMI predictor did not have many samples in the categories of "Obese" and "Overweight", which could lead to a biased statistic that needs more samples in order to truly tell us if there is no correlation.
+<br><br>
 
 **(f)** Heart Attack vs. Blood Pressure
 ```{r}
@@ -502,6 +532,9 @@ ggplot(df_clean, aes(x = BloodPressure, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: We conclude that there is a correlation between the different categories of Blood Pressure and the proportion of heart attacks. The "Yes" category has a much higher proportion of heart attacks than the others, with a value of 0.107 compared to 0.019, 0.025, and 0.037, which is a major different in proportions.
+<br><br>
+
 **(g)** Heart Attack vs. Healthcare Coverage
 ```{r}
 #Table
@@ -518,6 +551,9 @@ ggplot(df_clean, aes(x = HealthCare, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Conclusion**: There doesn't appear to be a correlation between Healthcare Coverage and the proportion of heart attacks. Both categories have very similar poportions, with only a slight increase for the "Yes" category, but not a statistcally significant one. Therfore, we deduce there is not a corelation with this predictor
+<br><br>
+
 **(h)** Heart Attack vs. Exercise
 ```{r}
 #Table
@@ -533,4 +569,26 @@ ggplot(df_clean, aes(x = Exercise, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+**Conclusion**: We do see a correlation bweteen Excerise activity and the proportion of heart attacks. The "No" category has double the proportion of heart attacks as the "Yes" category, which leads us to conclude that there is a strong correlation between the activity and excerise rate and heart attacks.
+<br><br>
+
+### IV. Future Directions
+
+  In this project, **HeartAttack** is selected as the response variable. Because it is a binary variable describing whether or not the respondent has heart attack (1=yes, 0=no), it will be logit transformed into logit (P(HeartAttack)). Logistic regression will be used for predicting odds of having heart attack.
+
+  In the bar graphs, for each predictor, we visualize proportion of individuals with heart attack across different categories. Based on this preliminary analysis, we have observed correlations between all selected predictors with response variable **HeartAttack**. Proportions of individuals with heart attack vary across different categorical levels, and it is observed in all predictors. Thus, in the logistic regression, we will use all predictors in the logistic regression model. 
+
+  Specifically, we set **BMI_Num** as the predictor in the main model. Because **BMI_Num** is a numeric variable, we will analyze how the odds of having heart attack change with a one-unit increase in BMI. The significance of each predictor’s relationship with heart attack will be assessed using individual Z-tests. 
+
+  Other categorical factors will add as additive predictors in the extended model, which include **SEX**, **Income**, **RACE**, **AGE**, **BloodPressure**, **HealthCare**, **Exercise**. Because they are categorical variables, we will analyze how the odds of having heart attack change when the category changes within each variable. Their overall contribution will first be evaluated using partial $\chi^2$ tests, and differences among levels of categorical predictors will be further examined through individual Z-tests. Only variables showing significant differences in heart attack odds across levels will be retained.
+  
+  Based on the significance results from both individual Z-tests and partial $\chi^2$ tests, the final extended model will be constructed. Model selection will be guided by the **Bayesian Information Criterion (BIC)**, which is appropriate given the large sample size and its preference for more parsimonious models. A **backward stepwise algorithm** will be used to identify the model with the lowest BIC.
+  
+  To ensure robustness, the final model will be assessed for influential data points using Cook’s distance and outlier tests for regression outliers. Multicollinearity between multiple predictors in the extensive models will be evaluated based on **Variance Inflation factor (VIF)**. The final model’s performance will be validated through two goodness-of-fit measures: the Hosmer-Lemeshow test and an error rate test, both of which assess how well the model predicts the actual odds of diabetes.
+
+
+
+
+
 
