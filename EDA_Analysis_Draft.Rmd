@@ -42,14 +42,8 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 - **BMI_Cat**: BMI category based on X_BMI5.  
   - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
 
-- **BloodPressure**: Ever told by a health professional that they have high blood pressure.  
-  - 1 = Yes - 2 = Yes, only during pregnancy - 3 = No - 4 = Borderline/pre-hypertensive
-
 - **HealthCare**: Whether respondent currently has any health care coverage.  
   - 1 = Yes - 2 = No 
-
-- **Exercise**: Whether the respondent did any physical activity (excluding work) in the past 30 days.  
-  - 1 = Yes - 2 = No  
 <br><br>
 
 #### 3) Research Interest
@@ -127,10 +121,9 @@ df1$INCOME <- factor(df1$INCOME2, levels = c(1:8),
 # Recode _RACEGR3 as factor with appropriate labels
 df1$`X_RACEGR3`[df1$`X_RACEGR3` == 9] <- NA
 df1$RACE <- factor(df1$`X_RACEGR3`,
-                         levels = c(1:7),
-                         labels = c("White", "Black", "Asian",
-                                    "NH/PI", "AI/AN", "Other",
-                                    "Multiracial"))
+                         levels = c(1:5),
+                         labels = c("White", "Black", "Other",
+                                    "Multiracial", "Hispanic"))
 
 # Recode _AGEG5YR
 df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
@@ -221,7 +214,7 @@ cat("Head_Attack\n")
 cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 ```
 
-**Conclusion**: Based on the mode calculation, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size. 
+**Conclusion**: Based on the mode calculation, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size.
 <br><br>
 
 **(b)** Predictor -- Sex
@@ -341,28 +334,7 @@ cat("Mean:", mean(df_clean$BMI_Num, na.rm = TRUE), "\n\n")
 **Conclusion**: We find that this distribution is skewed to the right, with a large tail that stretches towards the higher BMI values. This means that we have a very comprehensive distribution for the lower BMI values, but due to the large tail and few values at the higher end of range, our statistics such as mean (2820.969) and median (2712) are being skewed to the right. 
 <br><br>
 
-**(g)** Predictor -- Blood Pressure
-```{r}
-#table
-table(df_clean$BloodPressure)
-prop.table(table(df_clean$BloodPressure))
-
-#Bar graph
-ggplot(df_clean, aes(x = BloodPressure)) +
-  geom_bar(fill = "#1a80bb", color = "black") +
-  ggtitle("Bar Plot of Blood Pressure Distribution") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-#Central Tendency -- Mode
-cat("Blood_Pressure\n")
-cat("Mode:", get_mode(df_clean$BloodPressure), "\n\n")
-```
-
-**Conclusion**: There is an overwhelming more proportion of subjects that picked the category "Yes" (40.5%), but the mode still is "Borderline" (57.7%), which means that while we do not have many subjects that are in the "No" category, there are a lot in-between that might tip the distribution to be more equal than we initially thought.
-<br><br>
-
-**(h)** Predictor -- Healthcare Coverage
+**(g)** Predictor -- Healthcare Coverage
 ```{r}
 #table
 table(df_clean$HealthCare)
@@ -381,27 +353,6 @@ cat("Mode:", get_mode(df_clean$HealthCare), "\n\n")
 ```
 
 **Conclusion**: Based on the mode calculation, Yes is dominantly observed over male (93.2% vs. 0.067%).This is another thing to take note of when we do further data analysis later on, in which the "No" cateogry is not fairly represented in this database, which can very well skew results.
-<br><br>
-
-**(i)** Predictor -- Exercise
-```{r}
-#table
-table(df_clean$Exercise)
-prop.table(table(df_clean$Exercise))
-
-#Bar graph
-ggplot(df_clean, aes(x = Exercise)) +
-  geom_bar(fill = "#1a80bb", color = "black") +
-  ggtitle("Bar Plot of Exercise Distribution") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-#Central Tendency -- Mode
-cat("Exercise\n")
-cat("Mode:", get_mode(df_clean$Exercise), "\n\n")
-```
-
-**Conclusion**: Based on the mode calculation, Yes is dominantly observed over male (74.4% vs. 25.6%).This is another thing to take note of when we do further data analysis later on, in which the "No" cateogry is not fairly represented in this database, which can very well skew results.
 <br><br>
 
 #### 2) Correlation Analysis
@@ -432,8 +383,13 @@ ggplot(df_clean, aes(x = SEX, fill = HeartAttack)) +
 **Conclusion**: Based on the proportion and bar graph, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. 
 <br><br>
 
+```{r}
+unique(df_clean$INCOME)
+```
+
 **(b)** Heart Attack vs. Income Level
 ```{r}
+
 #Table
 prop.table(table(df_clean$HeartAttack, df_clean$INCOME), margin = 2)
 
@@ -445,6 +401,7 @@ ggplot(df_clean, aes(x = INCOME, fill = HeartAttack)) +
   labs(fill = "Heart Attack Status") +
   ggtitle("Proportion of Heart Attack by Income Level") +
   scale_fill_manual(values = custom_colors) +
+  scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
@@ -467,8 +424,7 @@ ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: When looking at the bar plot we made, we do not see a noticeable change in proportions of individuals having heart attack between the different categories of the Race predictor. It suggests that race may not be a significant risk factor of heart attack.
-<br><br>
+**Conclusion**: When looking at the bar plot we made, we do see a change in proportions of individuals having heart attack between the different categories of the Race predictor. Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
 
 **(d)** Heart Attack vs. Age
 ```{r}
@@ -505,29 +461,10 @@ ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: We do not see much of a difference in proportion of heart attacks across the different categories of BMI. It should be noted that the BMI predictor did not have many samples in the categories of "Obese" and "Overweight", which could lead to a biased statistic that needs more samples in order to truly tell us if there is no correlation.
+**Conclusion**: We do see a difference in proportion of heart attacks across the different categories of BMI. Obese group is having the highest proportion of having heart attack followed by underweight. Normal group has the lowest proportion of having heart attack.
 <br><br>
 
-**(f)** Heart Attack vs. Blood Pressure
-```{r}
-#Table
-prop.table(table(df_clean$HeartAttack, df_clean$BloodPressure), margin = 2)
-
-#Bar graph
-ggplot(df_clean, aes(x = BloodPressure, fill = HeartAttack)) +
-  geom_bar(position = "fill") +
-  ylab("Proportion") +
-  xlab("Blood Pressure") +
-  labs(fill = "Heart Attack Status") +
-  ggtitle("Proportion of Heart Attack by Blood Pressure Level") +
-  scale_fill_manual(values = custom_colors) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-**Conclusion**: There is a correlation between the different categories of Blood Pressure and the proportion of heart attacks. The "Yes" category has a much higher proportion of heart attacks than the others, with a value of 0.107 compared to 0.019, 0.025, and 0.037, which is a major different in proportions.
-<br><br>
-
-**(g)** Heart Attack vs. Healthcare Coverage
+**(f)** Heart Attack vs. Healthcare Coverage
 ```{r}
 #Table
 prop.table(table(df_clean$HeartAttack, df_clean$HealthCare), margin = 2)
@@ -543,39 +480,18 @@ ggplot(df_clean, aes(x = HealthCare, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: There doesn't appear to be a correlation between Healthcare Coverage and the proportion of heart attacks. Both categories have very similar proportions (5.9% vs. 3.8%), with only a slight increase for the "Yes" category, but not a statistically significant one. Therefore, we deduce there is not a correlation with this predictor
+**Conclusion**: There does appear to be a correlation between Healthcare Coverage and the proportion of heart attacks. People with healthcare coverage is having a higher proportion of having heart attack.
 <br><br>
 
-**(h)** Heart Attack vs. Exercise
-```{r}
-#Table
-prop.table(table(df_clean$HeartAttack, df_clean$Exercise), margin = 2)
-
-#Bar graph
-ggplot(df_clean, aes(x = Exercise, fill = HeartAttack)) +
-  geom_bar(position = "fill") +
-  ylab("Proportion") +
-  xlab("Exercise") +
-  labs(fill = "Heart Attack Status") +
-  ggtitle("Proportion of Heart Attack by Exercise Level") +
-  scale_fill_manual(values = custom_colors) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-**Conclusion**: We do see a correlation between Exercise activity and the proportion of heart attacks. The "No" category has double the proportion of heart attacks as the "Yes" category, which leads us to conclude that there is a strong correlation between the activity and excerise rate and heart attacks.
-<br><br>
-
-### IV. Future Directions
+### IV. Methodology
 
   In this project, **HeartAttack** is selected as the response variable. Because it is a binary variable describing whether or not the respondent has heart attack (1=yes, 0=no), it will be logit transformed into logit (P(HeartAttack)). Logistic regression will be used for predicting odds of having heart attack.
 
-  In the bar graphs, for each predictor, we visualize proportion of individuals with heart attack across different categories. Based on this preliminary analysis, we have observed correlations between 5 selected predictors with response variable **HeartAttack**. Significant predictors include **SEX**, **Income**, **AGE**, **BloodPressure**, and **Exercise**. Proportions of individuals with heart attack vary across different categorical levels, and it is observed in these predictors.  
+  In the bar graphs, for each predictor, we visualize proportion of individuals with heart attack across different categories. Based on this preliminary analysis, we have observed correlations between 5 selected predictors with response variable **HeartAttack**. Significant predictors include **SEX**, **Income**, **AGE**,**Race**, **Health Coverage**. Proportions of individuals with heart attack vary across different categorical levels, and it is observed in these predictors.  
 
-  Specifically, we set **AGE** as the predictor in the main model. The significance of the predictor’s relationship with heart attack will be assessed using individual Z-tests. Other categorical factors will add as additive predictors in the extended model, which include **SEX**, **Income**, **BloodPressure**, and **Exercise**. Because they are categorical variables, we will analyze how the odds of having heart attack change when the category changes within each variable. Their overall contribution will first be evaluated using partial $\chi^2$ tests, and differences among levels of categorical predictors will be further examined through individual Z-tests. Only variables showing significant differences in heart attack odds across levels will be retained.
+  Specifically, we set **BMI** as the predictor in the main model. The significance of the predictor’s relationship with heart attack will be assessed using individual Z-tests. Other categorical factors will add as additive predictors in the extended model, which include **SEX**, **Income**, **Race**, **Age**, and **Health Coverage** . Because they are categorical variables, we will analyze how the odds of having heart attack change when the category changes within each variable. Their overall contribution will first be evaluated using partial $\chi^2$ tests, and differences among levels of categorical predictors will be further examined through individual Z-tests. Only variables showing significant differences in heart attack odds across levels will be retained.
   
-  Based on the significance results from both individual Z-tests and partial $\chi^2$ tests, the final extended model will be constructed. Model selection will be guided by the **Bayesian Information Criterion (BIC)**, which is appropriate given the large sample size and its preference for more parsimonious models. A **backward stepwise algorithm** will be used to identify the model with the lowest BIC.
-  
-  To ensure robustness, the final model will be assessed for influential data points using Cook’s distance and outlier tests for regression outliers. Multicollinearity between multiple predictors in the extensive models will be evaluated based on **Variance Inflation factor (VIF)**. The final model’s performance will be validated through two goodness-of-fit measures: the Hosmer-Lemeshow test and an error rate test, both of which assess how well the model predicts the actual odds of diabetes.
+  Based on the significance results from both individual Z-tests and partial $\chi^2$ tests, the final extended model will be constructed. To ensure robustness, the final model will be assessed for influential data points using Cook’s distance and outlier tests for regression outliers. Multicollinearity between multiple predictors in the extensive models will be evaluated based on **Variance Inflation factor (VIF)**. The final model’s performance will be validated through goodness-of-fit measures: error rate test, which assess how well the model predicts the actual odds of heart attack.
 <br><br>
 
 ### V. Result and Conclusion
@@ -610,12 +526,12 @@ P-value: < 2.2e-16
 
 - Individual Z test: at the $\alpha = 0.05$ level of significance, we reject $H_0$. $\hat{\beta}_{BMI}$ is significantly greater than 0, and there is a significant positive association between Body Mass Index (BMI) and the odds of having heart attack
 
-- Slope interpretation: $\hat{\beta}_{BMI} = 2.196e-04$. An one unit ($kg/m^2$) increase in BMI increases the odds of having heart attack by a multiplicative factor of $e^{2.196e-04} = 1.00022$.  increases the odds by 0.022%.
+- Slope interpretation: $\hat{\beta}_{BMI} = 2.196e-04$. An one unit ($kg/m^2$) increase in BMI increases the odds of having heart attack by a multiplicative factor of $e^{0.0002196} = 1.00022$. A one unit increase in BMI increases the odds of having heart attack by 0.022%.
 <br><br>
 
 #### 2) Extended Model: Heart Attack vs. BMI + Demographic predictors
 
-While BMI shows a significant relationship with odds of having heart attack. Other factors like demographic predictors are also connected to diabetes. Specifically, sex, age, income level, insurance coverage, race, and physical activity are included in the extended model based on the main model with BMI. Their relationship with odds of having heart attack is tested. 
+While BMI shows a significant relationship with odds of having heart attack. Other factors like demographic predictors are also connected to heart attack. Specifically, sex, age, income level, insurance coverage, and race are included in the extended model based on the main model with BMI. Their relationship with odds of having heart attack is tested. 
 <br><br>
 
 **(a)** Overall $\chi^2$ Test
@@ -638,7 +554,7 @@ P-value: < 2.2e-16
 
 **(b)** Partial $\chi^2$ Test
 <br><br>
-**Purpose**: From the overall $X^2$ test, at least one predictor is significant in predicting odds of having heart attack In the anova table, a more detailed analysis is conducted to test which independent variables are specifically related with odds of having heart attack Dummy variables for each predictor is combined together.
+**Purpose**: From the overall $X^2$ test, at least one predictor is significant in predicting odds of having heart attack. In the anova table, a more detailed analysis is conducted to test which independent variables are specifically related with odds of having heart attack. Dummy variables for each predictor is combined together.
 
 ```{r}
 glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare, data = df_clean, family = binomial(logit))
@@ -646,12 +562,12 @@ glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + Health
 Anova(glm_extend, type="III")
 ```
 
-**Conclusion**: From the anova table, all the independent variables show significant relationship with odds of having diabetes. Sex, age, race, and income level have p-values < 2.2e-16. Healthcare coverage has a p-value is 0.0004477. 
+**Conclusion**: From the anova table, all the independent variables show significant relationship with odds of having heart attack. Sex, age, race, and income level have p-values < 2.2e-16. Healthcare coverage has a p-value is 0.0004477. 
 <br><br>
 
-**(c)** Individual Z Test (Need Revision)
+**(c)** Individual Z Test
 <br><br>
-**Purpose**: From the partial $\chi^2$ Test, all the independent variables are significantly related with odds of having diabetes. An individual Z Test is further preformed to check differences in odds of having diabetes within levels of each independent variable.
+**Purpose**: From the partial $\chi^2$ Test, all the independent variables are significantly related with odds of having heart attack. An individual Z Test is further preformed to check differences in odds of having heart attack within levels of each independent variable.
 
 ```{r}
 #Baseline Code for Dummy variables
@@ -668,43 +584,47 @@ summary(glm_extend)
 
 **Conclusion**:
 
-1) **Sex**: Men have higher odds of having heart attack
+1) **Sex**: Men have higher odds of having heart attack.
 
 - Slope interpretation: $\hat{\beta}_{Sex} = 0.9222827$. When keeping every other conditions the same, male have $e^{0.9222827} = 2.515$ times higher odds of having heart attack compared to females.
 <br><br>
 
-2) **Age**: People with obesity have higher odds of having heart attack
+2) **Age**: Odds of having heart attack increases as age increases.
 
 - Individual Z test: p-value is < 2e-16
 
-- Slope interpretation: $\hat{\beta}_{Age} = 6.015e-02$. In this model, when keeping every other conditions the same, an one year increase in age increases the odds of having diabetes by a multiplicative factor of $e^{6.015e-02} = 1.06197$, it increases the odds by 6.197%.
+- Slope interpretation: $\hat{\beta}_{Age} = 0.06015$. In this model, when keeping every other conditions the same, an one year increase in age increases the odds of having heart attack by a multiplicative factor of $e^{0.06015} = 1.06343$, it increases the odds by 6.343%.
 <br><br>
 
-3) **Income Level**: Odds of having diabetes increases when income level increases. 
+3) **Income Level**: Odds of having heart attack decreases when income level increases. 
 
-- **$15,000–$24,999 level**: when comparing to the baseline group (*Less than $15,000*), *$15,000–$24,999* income level has $e^{-0.2525002} = 0.776855$ times lower odds of having diabetes, it has a lower odds by 22.3%.
+- **$10-15k**: when comparing to the baseline group (*Less than $10,000*), *$10-15k* income level has $e^{-0.1087} = 0.8970$ times lower odds of having heart attack, it has a lower odds by 10.3%.
 
-- **$25,000–$34,999 level**: when comparing to the baseline group (*Less than $15,000*), *$25,000–$34,999* income level has $e^{-0.4287925} = 0.651295$ times lower odds of having diabetes, it has a lower odds by 34.9%.
+- **$15-20k**: when comparing to the baseline group (*Less than $10,000*), *$15-20k* income level has $e^{-0.2909} = 0.7476$ times lower odds of having heart attack, it has a lower odds by 25.24%.
 
-- **$35,000–$49,999 level**: when comparing to the baseline group (*Less than $15,000*), *$35,000–$49,999* income level has $e^{-0.5323012} = 0.587252$ times lower odds of having diabetes, it has a lower odds by 41.27%.
+- **$20-25k**: when comparing to the baseline group (*Less than $10,0000*), *$20-25k* income level has $e^{-0.5422} = 0.5815$ times lower odds of having heart attack, it has a lower odds by 41.85%.
 
-- **$50,000 or more level**: when comparing to the baseline group (*Less than $15,000*), *$50,000 or more* income level has $e^{-0.7374345} = 0.47834$ times lower odds of having diabetes, it has a lower odds by 52.17%.
+- **$25-35k**: when comparing to the baseline group (*Less than $10,000*), *$25-35k* income level has $e^{-0.7404} = 0.4769$ times lower odds of having heart attack, it has a lower odds by 52.31%.
+
+- **$35-50k**: when comparing to the baseline group (*Less than $10,000*), *$35-50k* income level has $e^{-0.9335} = 0.3932$ times lower odds of having heart attack, it has a lower odds by 60.68%.
+
+- **$50-75k**: when comparing to the baseline group (*Less than $10,000*), *$50-75k* income level has $e^{-1.141} = 0.3195$ times lower odds of having heart attack, it has a lower odds by 68.05%.
 <br><br>
 
-4) **Race**: white people has lowest odds of having diabetes. Within defined race groups, black people has highest odds of having diabetes
+4) **Race**: Hispanic people has lowest odds of having heart attack. Within defined race groups, multiracial people has highest odds of having heart attack.
 
-- **Black**: when comparing to the baseline group (*White*), black people has $e^{0.5578105} = 1.74684$ times higher odds of having diabetes, it has a higher odds by 74.68%.
+- **Hispanic**: when comparing to the baseline group (*Black*), black people has $e^{-0.1246} = 0.8828$ times lower odds of having heart attack, it has lowered odds by 11.72%.
 
-- **Other**: when comparing to the baseline group (*White*), people from other race groups has $e^{0.5610085} = 1.75244$ times higher odds of having diabetes, it has a higher odds by 75.24%.
+- **Multiracial**: when comparing to the baseline group (*Black*), people from other race groups has $e^{0.4913} = 1.634$ times higher odds of having heart attack, it has a higher odds by 63.4%.
 
-- **Multiracial**: when comparing to the baseline group (*White*), multiracial people has $e^{0.4114635} = 1.50903$ times higher odds of having diabetes, it has a higher odds by 50.90%.
+- **Other**: when comparing to the baseline group (*Black*), multiracial people has $e^{0.1987} = 1.220$ times higher odds of having heart attack, it has a higher odds by 22.0%.
 
-- **Hispanic**: when comparing to the baseline group (*White*), Hispanic people has $e^{0.4121775} = 1.5101$ times higher odds of having diabetes, it has a higher odds by 51.01%.
+- **White**: when comparing to the baseline group (*Black*), Hispanic people has $e^{0.1727} = 1.189$ times higher odds of having heart attack, it has a higher odds by 18.9%.
 <br><br>
 
-5) **HealthCare Coverafe**: Having healthcare covrage have higher odds of having heart attack
+5) **HealthCare Coverage**: Having healthcare coverage have higher odds of having heart attack.
 
-- Slope interpretation: $\hat{\beta}_{Sex} = 0.9222827$. When keeping every other conditions the same, male have $e^{0.9222827} = 2.515$ times higher odds of having heart attack compared to females.
+- Slope interpretation: $\hat{\beta}_{Sex} = 0.1146$. When keeping every other conditions the same, people with healthcare coverage have $e^{0.1146} = 1.121$ times higher odds of having heart attack compared to people without healthcare coverage. Having healthcare coverage increases odds of having heart attack by 12.1%.
 <br><br>
 
 **(d)** Multicollinearity for Extended Model
@@ -716,7 +636,7 @@ vif(glm_extend)
 <br><br>
 
 #### 3) Extended Model: Heart Attack vs. BMI + Demographic predictors + Interaction term
-Partial $\chi^2$ test is conducted to test if each interactive term is specifically related with odds of having diabetes. Individual levels within each qualitative variable is combined and tested together.  
+Partial $\chi^2$ test is conducted to test if each interactive term is specifically related with odds of having heart attack Individual levels within each qualitative variable is combined and tested together.  
 ```{r}
 glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare + Exercise + BMI_Num:SEX + BMI_Num:AGE_Num + BMI_Num:RACE + BMI_Num:INCOME + BMI_Num:HealthCare, data = df_clean, family = binomial(logit))
 
@@ -725,7 +645,7 @@ Anova(glm_full, type = "III")
 glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare + Exercise + BMI_Num:AGE_Num + BMI_Num:RACE, data = df_clean, family = binomial(logit))
 ```
 
-**Conclusion**: From the anova table, BMI shows significant interaction effects with race, suggesting that the impact of BMI on heart attack risk is not uniform across subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by age, race, and physical activity. Therefore, it cannot be interpreted independently of these factors.
+**Conclusion**: From the anova table, BMI shows significant interaction effects with race, suggesting that the impact of BMI on heart attack risk is not uniform across race subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by race. Therefore, it cannot be interpreted independently of race factor.
 <br><br>
 
 $$
@@ -742,22 +662,9 @@ $$
 
 #### 4) Goodness of Fit Test
 
-Purpose: after deriving the final model that is the best at predicting odds of having heart attack, two goodness of fit tests are conducted. They aim to assess how well the model predicts the actual odds of heart attack 
+Purpose: after deriving the final model that is the best at predicting odds of having heart attack, error rate is calculated. It aims to assess how well the model predicts the actual odds of heart attack. 
 
-**(a)** The Hosmer-Lemeshow Test
-```{r}
-glm_final <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise + BMI_Num:RACE, data = df_clean, family = binomial(logit))
-```
-$H_0$: Fit is sufficient
-
-$H_a$: Fit is not sufficient
-
-P-value: < 2.2e-16
-
-**Conclusion**: The p-value is < 2.2e-16, which is less than the significance level of 0.05. Thus, we reject the null hypothesis, and the fit of the logistic model is not sufficient for predicting odds of having diabetes.
-<br><br>
-
-**(b)** Error Rate
+**(a)** Error Rate
 ```{r}
 glm.probs <- predict(glm_final, type = "response")
 dim(df_clean)
