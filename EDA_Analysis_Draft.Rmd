@@ -99,7 +99,7 @@ df <- read.csv("~/Documents/GitHub/EDA_Project/data/2015.csv")
 
 ```{r}
 #Select relevant predictors and dependent variable
-df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_BMI5",
+df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_AGE80", "X_BMI5",
               "X_BMI5CAT", "BPHIGH4", "HLTHPLN1", "EXERANY2")]
 ```
 <br><br>
@@ -136,6 +136,9 @@ df1$RACE <- factor(df1$`X_RACEGR3`,
 df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
                          labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49",
                                     "50–54", "55–59", "60–64", "65–69", "70–74", "75–79", "80+"))
+
+# Recode _AGE80 
+names(df1)[names(df1) == "X_AGE80"] <- "AGE_Num"
 
 # Recode _BMI5 
 df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
@@ -183,6 +186,10 @@ write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.
 **Visualization**: In this section, we visualize the distribution of response variable **HeartAttack** and 9 predictors. We also measure the central tendency using mode, median, or mean depending on whether the variable is categorical, nominal, and numeric.
 
 **Define Mode Functions for central tendency measurement**: We create the function get_mode(), a function we will later use for the central tendency measurement. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5] is imputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
+
+```{r}
+df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
+```
 
 ```{r}
 # Function to calculate mode
@@ -575,10 +582,20 @@ ggplot(df_clean, aes(x = Exercise, fill = HeartAttack)) +
 
 #### 1) Main Model
 
+```{r}
+df_clean$HeartAttack <- as.factor(df_clean$HeartAttack)
+df_clean$SEX <- as.factor(df_clean$SEX)
+df_clean$RACE <- as.factor(df_clean$RACE)
+df_clean$INCOME <- as.factor(df_clean$INCOME)
+df_clean$HealthCare <- as.factor(df_clean$HealthCare)
+```
+
+
 **(a)** Heart Attack vs. BMI
 
 ```{r}
 #Full model
+df_clean$HeartAttack <- ifelse(df_clean$HeartAttack == "Yes", 1, 0)
 glm_main <- glm(HeartAttack ~ BMI_Num, data = df_clean, family = binomial(logit))
 summary(glm_main)
 ```
@@ -593,7 +610,7 @@ P-value: < 2.2e-16
 
 - Individual Z test: at the $\alpha = 0.05$ level of significance, we reject $H_0$. $\hat{\beta}_{BMI}$ is significantly greater than 0, and there is a significant positive association between Body Mass Index (BMI) and the odds of having heart attack
 
-- Slope interpretation: $\hat{\beta}_{BMI} = 2.196e-04$. An one unit ($kg/m^2$) increase in BMI increases the odds of having heart attack by a multiplicative factor of $e^{2.196e-04} = 1.00022$. Having obesity increases the odds by 0.022%.
+- Slope interpretation: $\hat{\beta}_{BMI} = 2.196e-04$. An one unit ($kg/m^2$) increase in BMI increases the odds of having heart attack by a multiplicative factor of $e^{2.196e-04} = 1.00022$.  increases the odds by 0.022%.
 <br><br>
 
 #### 2) Extended Model: Heart Attack vs. BMI + Demographic predictors
@@ -605,7 +622,7 @@ While BMI shows a significant relationship with odds of having heart attack. Oth
 <br><br>
 **Purpose**: overall $\chi^2$ test is firstly performed to test if at least on predictor in the model is significant and if the model is useful for more detailed analysis.
 ```{r}
-glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise, data = df_clean, family = binomial(logit))
+glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare, data = df_clean, family = binomial(logit))
 glm_null <- glm(HeartAttack ~ 1, data = df_clean, family = binomial(logit))
 anova(glm_null, glm_extend, test = "Chisq")
 ```
@@ -624,12 +641,12 @@ P-value: < 2.2e-16
 **Purpose**: From the overall $X^2$ test, at least one predictor is significant in predicting odds of having heart attack In the anova table, a more detailed analysis is conducted to test which independent variables are specifically related with odds of having heart attack Dummy variables for each predictor is combined together.
 
 ```{r}
-glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise, data = df_clean, family = binomial(logit))
+glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare, data = df_clean, family = binomial(logit))
 
 Anova(glm_extend, type="III")
 ```
 
-**Conclusion**: From the anova table, all the independent variables show significant relationship with odds of having diabetes. Sex, age, race, income level, and physical activity have p-values < 2.2e-16. Healthcare coverage has a p-value is 0.0004477. 
+**Conclusion**: From the anova table, all the independent variables show significant relationship with odds of having diabetes. Sex, age, race, and income level have p-values < 2.2e-16. Healthcare coverage has a p-value is 0.0004477. 
 <br><br>
 
 **(c)** Individual Z Test (Need Revision)
@@ -639,11 +656,9 @@ Anova(glm_extend, type="III")
 ```{r}
 #Baseline Code for Dummy variables
 contrasts(df_clean$SEX)
-contrasts(df_clean$AGE)
 contrasts(df_clean$RACE)
 contrasts(df_clean$INCOME)
 contrasts(df_clean$HealthCare)
-contrasts(df_clean$Exercise)
 ```
 
 ```{r}
@@ -653,21 +668,19 @@ summary(glm_extend)
 
 **Conclusion**:
 
-1) **Obesity**: People with obesity have higher odds of having diabetes
+1) **Sex**: Men have higher odds of having heart attack
+
+- Slope interpretation: $\hat{\beta}_{Sex} = 0.9222827$. When keeping every other conditions the same, male have $e^{0.9222827} = 2.515$ times higher odds of having heart attack compared to females.
+<br><br>
+
+2) **Age**: People with obesity have higher odds of having heart attack
 
 - Individual Z test: p-value is < 2e-16
 
-- Slope interpretation: after adding demographic variables, the slope of obesity is still significantly related to odds of having diabetes. Thus, the extended model still retains the effectiveness in predicting odds of having diabetes. Specifically, $\hat{\beta}_{obesity} = 1.1287482$. In this model, when keeping every other conditions the same, individuals with obesity have $e^{1.1287482} = 3.09$ times higher odds of having diabetes compared to individuals without obesity.
+- Slope interpretation: $\hat{\beta}_{Age} = 6.015e-02$. In this model, when keeping every other conditions the same, an one year increase in age increases the odds of having diabetes by a multiplicative factor of $e^{6.015e-02} = 1.06197$, it increases the odds by 6.197%.
 <br><br>
-2) **Sex**: Women have higher odds of having diabetes
 
-- Slope interpretation: $\hat{\beta}_{Sex} = -0.0418418$. When keeping every other conditions the same, female have $e^{-0.0418418} = 0.959$ times lower odds of having diabetes compared to males. Being a female decreases the odds by 4.1%.
-<br><br>
-3) **Education level**: No significant differences in odds of having diabetes between education levels
-
-- Slope interpretation: when comparing to the baseline group (*No schooling or kindergarten*), no education levels show significant differences in odds of having diabetes.
-<br><br>
-4) **Income Level**: Odds of having diabetes increases when income level increases. 
+3) **Income Level**: Odds of having diabetes increases when income level increases. 
 
 - **$15,000–$24,999 level**: when comparing to the baseline group (*Less than $15,000*), *$15,000–$24,999* income level has $e^{-0.2525002} = 0.776855$ times lower odds of having diabetes, it has a lower odds by 22.3%.
 
@@ -677,7 +690,8 @@ summary(glm_extend)
 
 - **$50,000 or more level**: when comparing to the baseline group (*Less than $15,000*), *$50,000 or more* income level has $e^{-0.7374345} = 0.47834$ times lower odds of having diabetes, it has a lower odds by 52.17%.
 <br><br>
-5) **Race**: white people has lowest odds of having diabetes. Within defined race groups, black people has highest odds of having diabetes
+
+4) **Race**: white people has lowest odds of having diabetes. Within defined race groups, black people has highest odds of having diabetes
 
 - **Black**: when comparing to the baseline group (*White*), black people has $e^{0.5578105} = 1.74684$ times higher odds of having diabetes, it has a higher odds by 74.68%.
 
@@ -687,11 +701,10 @@ summary(glm_extend)
 
 - **Hispanic**: when comparing to the baseline group (*White*), Hispanic people has $e^{0.4121775} = 1.5101$ times higher odds of having diabetes, it has a higher odds by 51.01%.
 <br><br>
-6) **Age**: People with obesity have higher odds of having diabetes
 
-- Individual Z test: p-value is < 2e-16
+5) **HealthCare Coverafe**: Having healthcare covrage have higher odds of having heart attack
 
-- Slope interpretation: $\hat{\beta}_{Age} = 0.0404160$. In this model, when keeping every other conditions the same, an one year increase in age increases the odds of having diabetes by a multiplicative factor of $e^{0.0404160} = 1.04124$, it increases the odds by 4.04%.
+- Slope interpretation: $\hat{\beta}_{Sex} = 0.9222827$. When keeping every other conditions the same, male have $e^{0.9222827} = 2.515$ times higher odds of having heart attack compared to females.
 <br><br>
 
 **(d)** Multicollinearity for Extended Model
@@ -702,17 +715,17 @@ vif(glm_extend)
 **Conclusion**: Based on the variance inflation factor, no multicollinearity is observed between predictors. All predictors have GVIF around 1, suggesting a very low multicollinearity, and each predictor contributes unique information to the model.
 <br><br>
 
-#### 3) Extended Model: Diabetes vs. Obesity + Demographic predictors + Interaction term
+#### 3) Extended Model: Heart Attack vs. BMI + Demographic predictors + Interaction term
 Partial $\chi^2$ test is conducted to test if each interactive term is specifically related with odds of having diabetes. Individual levels within each qualitative variable is combined and tested together.  
 ```{r}
-glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise + BMI_Num:SEX + BMI_Num:AGE + BMI_Num:RACE + BMI_Num:INCOME + BMI_Num:HealthCare + BMI_Num:Exercise, data = df_clean, family = binomial(logit))
+glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare + Exercise + BMI_Num:SEX + BMI_Num:AGE_Num + BMI_Num:RACE + BMI_Num:INCOME + BMI_Num:HealthCare, data = df_clean, family = binomial(logit))
 
 Anova(glm_full, type = "III")
 
-glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise + BMI_Num:AGE + BMI_Num:RACE + BMI_Num:Exercise, data = df_clean, family = binomial(logit))
+glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare + Exercise + BMI_Num:AGE_Num + BMI_Num:RACE, data = df_clean, family = binomial(logit))
 ```
 
-**Conclusion**: From the anova table, BMI shows significant interaction effects with age, race, and physical activity, suggesting that the impact of BMI on heart attack risk is not uniform across subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by age, race, and physical activity. Therefore, it cannot be interpreted independently of these factors.
+**Conclusion**: From the anova table, BMI shows significant interaction effects with race, suggesting that the impact of BMI on heart attack risk is not uniform across subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by age, race, and physical activity. Therefore, it cannot be interpreted independently of these factors.
 <br><br>
 
 $$
@@ -724,9 +737,7 @@ $$
 \hat{\beta}_4 \cdot \texttt{Race} +
 \hat{\beta}_5 \cdot \texttt{Income} +
 \hat{\beta}_6 \cdot \texttt{Healthcare Coverage} +
-\hat{\beta}_7 \cdot (\texttt{BMI} \times \texttt{Age}) +
-\hat{\beta}_8 \cdot (\texttt{BMI} \times \texttt{Race})+
-\hat{\beta}_8 \cdot (\texttt{BMI} \times \texttt{Physical Activity})+
+\hat{\beta}_8 \cdot (\texttt{BMI} \times \texttt{Race})
 $$
 
 #### 4) Goodness of Fit Test
@@ -735,9 +746,7 @@ Purpose: after deriving the final model that is the best at predicting odds of h
 
 **(a)** The Hosmer-Lemeshow Test
 ```{r}
-glm_final <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise + BMI_Num:AGE + BMI_Num:RACE + BMI_Num:Exercise, data = df_clean, family = binomial(logit))
-
-hoslem.test(df_clean$HeartAttack, fitted(glm_final), g = 20)
+glm_final <- glm(HeartAttack ~ BMI_Num + SEX + AGE + RACE + INCOME + HealthCare + Exercise + BMI_Num:RACE, data = df_clean, family = binomial(logit))
 ```
 $H_0$: Fit is sufficient
 
@@ -757,9 +766,9 @@ glm.pred[glm.probs > 0.5]<-1      #assign >0.5 predicted_Y = 1; if < 0.5 predict
 table(glm.pred, df_clean$HeartAttack)
 
 #error rate
-error <- (18412+9)/315938
+error <- (18412+11)/315938
 error
 ```
 
-**Conclusion**: The error rate is `r error`, which is around 0.05. Thus, the logistic model is good for predicting odds of having diabetes. 
+**Conclusion**: The error rate is `r error`, which is around 0.05. Thus, the logistic model is good for predicting odds of having heart attack 
 <br><br>
