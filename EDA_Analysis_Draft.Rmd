@@ -666,7 +666,7 @@ Purpose: after deriving the final model that is the best at predicting odds of h
 
 **(a)** Error Rate
 ```{r}
-glm.probs <- predict(glm_final, type = "response")
+glm.probs <- predict(glm_full_revised, type = "response")
 dim(df_clean)
 glm.pred<-rep(0, length(glm.probs))    #creating empty vector
 glm.pred[glm.probs > 0.5]<-1      #assign >0.5 predicted_Y = 1; if < 0.5 predicted_Y = 0
