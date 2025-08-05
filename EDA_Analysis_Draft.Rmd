@@ -725,7 +725,7 @@ glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCa
 
 Anova(glm_full, type = "III")
 
-glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + HealthCare + Exercise + BMI_Num:AGE_Num + BMI_Num:RACE, data = df_clean, family = binomial(logit))
+glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + BMI_Num:AGE_Num + BMI_Num:RACE, data = df_clean, family = binomial(logit))
 ```
 
 **Conclusion**: From the anova table, BMI shows significant interaction effects with race, suggesting that the impact of BMI on heart attack risk is not uniform across race subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by race. Therefore, it cannot be interpreted independently of race factor.
@@ -739,8 +739,7 @@ $$
 \hat{\beta}_3 \cdot \texttt{Age} +
 \hat{\beta}_4 \cdot \texttt{Race} +
 \hat{\beta}_5 \cdot \texttt{Income} +
-\hat{\beta}_6 \cdot \texttt{Healthcare Coverage} +
-\hat{\beta}_8 \cdot (\texttt{BMI} \times \texttt{Race})
+\hat{\beta}_6 \cdot (\texttt{BMI} \times \texttt{Race})
 $$
 
 #### 4) Goodness of Fit Test
