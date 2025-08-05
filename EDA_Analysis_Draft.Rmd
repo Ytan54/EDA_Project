@@ -81,6 +81,8 @@ library(carData)
 library(ResourceSelection)
 library(pROC)
 library(dplyr)
+library(emmeans)
+library(ggeffects)
 ```
 <br><br>
 
@@ -621,6 +623,91 @@ summary(glm_extend)
 5) **HealthCare Coverage**: Having healthcare coverage have higher odds of having heart attack.
 
 - Slope interpretation: $\hat{\beta}_{Sex} = 0.1146$. When keeping every other conditions the same, people with healthcare coverage have $e^{0.1146} = 1.121$ times higher odds of having heart attack compared to people without healthcare coverage. Having healthcare coverage increases odds of having heart attack by 12.1%.
+<br><br>
+
+**(c)** Plot Logistic Regression
+<br><br>
+
+1) Ordinal & Numerical Predictors
+```{r}
+# --- Bar plot for categorical predictor (INCOME) ---
+plot_income_bar <- function(model) {
+  emm <- emmeans(model, ~ INCOME, type = "response")
+  emm_df <- as.data.frame(emm)
+  
+  ggplot(emm_df, aes(x = INCOME, y = prob)) +
+    geom_col(fill = "#1a80bb") +
+    geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2) +
+    scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k",
+                                "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab("Income Level") +
+    ggtitle("Predicted Risk by Income Level") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+# --- Line plot for numeric predictor ---
+plot_numeric_line <- function(model, term, x_label) {
+  pred <- ggpredict(model, terms = term)
+  
+  ggplot(pred, aes(x = x, y = predicted)) +
+    geom_line(color = "blue", size = 1) +
+    geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab(x_label) +
+    ggtitle(paste("Predicted Risk by", x_label)) +
+    theme_minimal()
+}
+
+# --- Generate plots ---
+plot_income  <- plot_income_bar(glm_extend)
+plot_age     <- plot_numeric_line(glm_extend, "AGE_Num", "Age")
+plot_bmi     <- plot_numeric_line(glm_extend, "BMI_Num", "BMI")
+
+# --- View plots ---
+print(plot_income)
+print(plot_age)
+print(plot_bmi)
+```
+<br><br>
+
+2) Categorical Predictors
+```{r}
+plot_predicted_probs <- function(varname, model) {
+  emm <- emmeans(model, as.formula(paste("~", varname)), type = "response")
+  emm_df <- as.data.frame(emm)
+
+  p <- ggplot(emm_df, aes_string(x = varname, y = "prob")) +
+    geom_col(fill = "skyblue") +
+    geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab(varname) +
+    ggtitle(paste("Predicted Risk by", varname)) +
+    theme_minimal()
+
+  # Follow your example: set axis order via scale_x_discrete (plot-only)
+  if (varname == "INCOME") {
+    p <- p +
+      scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k",
+                                  "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+
+  p
+}
+
+# Use with your fitted model glm_extend
+plot_sex        <- plot_predicted_probs("SEX", glm_extend)
+plot_race       <- plot_predicted_probs("RACE", glm_extend)
+plot_income     <- plot_predicted_probs("INCOME", glm_extend)
+plot_healthcare <- plot_predicted_probs("HealthCare", glm_extend)
+
+print(plot_sex)
+print(plot_race)
+print(plot_income)
+print(plot_healthcare)
+```
 <br><br>
 
 **(d)** Multicollinearity for Extended Model
