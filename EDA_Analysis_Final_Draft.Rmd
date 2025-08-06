@@ -590,7 +590,6 @@ summary(glm_extend)
 
 **(c)** Plot Logistic Regression
 <br><br>
-
 1) Ordinal & Numerical Predictors
 ```{r}
 # --- Bar plot for categorical predictor (INCOME) ---
