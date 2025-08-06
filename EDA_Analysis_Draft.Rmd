@@ -452,33 +452,22 @@ prop.table(table(df_clean$HeartAttack, df_clean$BMI_Cat), margin = 2)
 ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
   geom_bar(position = "fill") +
   ylab("Proportion") +
-  xlab("BMI") +
+  xlab("BMI Level") +
   labs(fill = "Heart Attack Status") +
-  ggtitle("Proportion of Heart Attack by BMI Level") +
+  scale_x_discrete(
+    limits = c("Normal", "Overweight", "Obese"),
+    labels = c(
+      "Normal"      = "Normal Weight (18.5–24.9)",
+      "Obese"       = "Obese (≥ 30.0)",
+      "Overweight"  = "Overweight (25.0–29.9)"
+    ),
+    drop = TRUE
+  ) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 **Conclusion**: We do see a difference in proportion of heart attacks across the different categories of BMI. Obese group is having the highest proportion of having heart attack followed by underweight. Normal group has the lowest proportion of having heart attack.
-<br><br>
-
-**(f)** Heart Attack vs. Healthcare Coverage
-```{r}
-#Table
-prop.table(table(df_clean$HeartAttack, df_clean$HealthCare), margin = 2)
-
-#Bar graph
-ggplot(df_clean, aes(x = HealthCare, fill = HeartAttack)) +
-  geom_bar(position = "fill") +
-  ylab("Proportion") +
-  xlab("Healthcare Coverage") +
-  labs(fill = "Heart Attack Status") +
-  ggtitle("Proportion of Heart Attack by Healthcare Coverage") +
-  scale_fill_manual(values = custom_colors) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-**Conclusion**: There does appear to be a correlation between Healthcare Coverage and the proportion of heart attacks. People with healthcare coverage is having a higher proportion of having heart attack.
 <br><br>
 
 ### IV. Methodology
