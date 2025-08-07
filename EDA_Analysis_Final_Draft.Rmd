@@ -71,7 +71,7 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 #### 1) Selecting Response Variables and Predictors
 
-1. We set up the environment and install the packages necessary for our data analysis below. We load all the installed packages above to make the functions within them avaialble to use in our script.
+1. We set up the environment and install the packages necessary for our data analysis below. We in the code below, we load all the installed packages to make the functions within them available to use in our script.
 
 ```{r}
 # Load libraries
@@ -86,23 +86,31 @@ library(ggeffects)
 ```
 <br><br>
 
-2. We load our original dataset **2015.csv** into R Studio. Then we select our response variable **CVDINFR4** and 9 relevant predictors to a new dataframe for the following set of data analysis.
+2. We first load our original dataset **2015.csv** into R Studio. The dataset is directly downloaded from CDC website and hasn't been cleaned yet. 
 
 ```{r}
 #Load original dataset
 df <- read.csv("~/Documents/GitHub/EDA_Project/data/2015.csv")
 ```
 
+3. The original dataset has 330 variables. To have a more effective and condense dataset, we only select variables that will be used for future analysis into a new dataset **df1**. These include response variable -- heart attack(`CVDINFR4`), and predictors -- sex(`SEX`), income level(`INCOME2`), race(`X_RACEGR3`), age(`X_AGE80` for numeric; `X_AGEG5YR` for categorical), and BMI(`X_BMI5` for numeric; `X_BMI5CAT` for categorical)
+
 ```{r}
 #Select relevant predictors and dependent variable
 df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_AGE80", "X_BMI5",
-              "X_BMI5CAT", "BPHIGH4", "HLTHPLN1", "EXERANY2")]
+              "X_BMI5CAT")]
 ```
 <br><br>
 
-#### 2) Recoding Variables
+#### 2) Factoring and Renaming Variables 
 
-Among 10 variables, 8 of them are categorical variables stored in numbers. Thus, we first redefine the predictors to their corresponding categorical levels for a clearer representation Then we rename our predictors to make their names more comprehensible. By using the factor() function and specifying our own labels, we rename and redefine our selected variables.
+After selecting response variable and main predictors, we factor variables, rename variables, and detect NA in the dataset. 
+
+  **Factor variables**: In the original dataset, all variables are coded as numbers, including categorical values. Thus, we first factor all the predictors by changing numbers into their corresponding categorical labels. We do this by using factor() functions.
+  
+  **Rename variables**: We also rename variables by storing factored variables into a clearer name.
+  
+  **Detect NA**: For NA values, they are encoded as specific numbers for each predictor. The specific values representing NA are written in the 2015 codebook report on CDC website. For example, for response variable heart attack, "7" represents "Don't know", and "9" represents "Refused". We look up for numbers that represent NA for each variable, and we recode these numbers into "NA" using factor() functions.
 
 ```{r}
 # Recode CVDINFR4
@@ -142,31 +150,17 @@ names(df1)[names(df1) == "X_BMI5"] <- "BMI_Num"
 # Recode _BMI5CAT
 df1$BMI_Cat <- factor(df1$`X_BMI5CAT`, levels = 1:4,
                          labels = c("Underweight", "Normal", "Overweight", "Obese"))
-
-# Recode BPHIGH4
-df1$BPHIGH4[df1$BPHIGH4 %in% c(7, 9)] <- NA
-df1$BloodPressure <- factor(df1$BPHIGH4, levels = c(1, 2, 3, 4),
-                      labels = c("Yes", "No", "Borderline", "Pregnancy"))
-
-# Recode HLTHPLN1
-df1$HLTHPLN1[df1$HLTHPLN1 %in% c(7, 9)] <- NA
-df1$HealthCare <- factor(df1$HLTHPLN1, levels = c(1, 2), labels = c("Yes", "No"))
-
-# Recode EXERANY2
-df1$EXERANY2[df1$EXERANY2 %in% c(7, 9)] <- NA
-df1$Exercise <- factor(df1$EXERANY2, levels = c(1, 2), labels = c("Yes", "No"))
 ```
 
 <br><br>
 
 #### 3) Handling Missing Values
 
-**Filtering out rows with N/A**: In the last step of our dataset cleaning, we must ensure that our cleaned dataset doesn't have missing values in it. So we remove any rows within the dataset that have missing values in it, and export the dataset into a CSV file for any future use.
+**Filtering out rows with N/A**: In the last step of our dataset cleaning, we must ensure that our cleaned dataset doesn't have missing values in it. So we remove any rows within the dataset that have missing values using na.omit() functions. We also store the dataset into a new dataset called **df_clean**. We then export the dataset into a CSV file for future use using write.csv() functions.
 
 ```{r}
 # Remove rows with any NA values
 df_clean <- na.omit(df1)  
-nrow(df_clean)
 
 #save cleaned files into csv
 write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.names = FALSE)
@@ -178,7 +172,7 @@ write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.
 
 #### 1) Frequency Distribution of Heart Attack and Predictors
 
-**Visualization**: In this section, we visualize the distribution of response variable **HeartAttack** and 9 predictors. We also measure the central tendency using mode, median, or mean depending on whether the variable is categorical, nominal, and numeric.
+**Visualization**: In this section, we visualize the distribution of response variable **HeartAttack** and 5 predictors. We also measure the central tendency using mode, median, or mean depending on whether the variable is categorical, nominal, and numeric.
 
 **Define Mode Functions for central tendency measurement**: We create the function get_mode(), a function we will later use for the central tendency measurement. Get_mode() takes in a vector form, which it then uses to create a table, tbl, of that vector, ultimately finding the value with the highest frequency in that table. For example, if a vector of [1,4,5,5] is imputed, we create a 2x2 table of the values, and find that 5 is the value with the highest frequency (as it is found twice in the array)
 
