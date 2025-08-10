@@ -9,6 +9,20 @@ GOALS
 4. Explore interaction effects between BMI and demographic variables.
 5. Provide reproducible code and documentation for public health researchers and data scientists.
 
-HOW TO USE THIS REPOSITORY
+REPOSITORY STRUCTURE
+- **Code/**: Contains R scripts and R Markdown files for analysis.
+- **Data/**: Contains cleaned datasets and a README describing data details.
+- **Results/**: (If applicable) Stores output tables and plots.
+- **readme.md**: Project overview and usage instructions.
 
+HOW TO USE REPOSITORY
+```bash
+# Clone the repository
+git clone https://github.com/Ytan54/EDA_Project.git
+
+# Move into the project folder
+cd EDA_Project
+
+# Run an R script (example)
+Rscript Code/EDA_Analysis_Final_Draft.Rmd
 
