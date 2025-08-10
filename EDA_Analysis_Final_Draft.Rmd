@@ -12,7 +12,7 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 #### 1) Introducing the Dataset
 
-  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)**—a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both land-line and cellular, reaching adults aged 18 and older living in community settings.  
+  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)** -- a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both land-line and cellular, reaching adults aged 18 and older living in community settings.  
 
   The BRFSS was designed to track health-related risk behaviors, chronic conditions, and use of preventive care across the U.S. In 2015, it collected information from 441,456 individuals, and the result spanned over all 50 states, the District of Columbia, Puerto Rico, and Guam. Having a large and representative sample sizes, the dataset give us a rich and reliable snapshot of health behaviors nationwide. The dataset also include 330 columns, which allows us to have a wide range of variables to explore and test on. 
   
@@ -25,11 +25,11 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
   
   Our main outcome of interest is **heart attack** (`CVDINFR4`). This choice is deliberate: heart attacks are urgent, affecting 17.9 millions of lives each year. Thus, it demands immediate medical attention ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)). However, heart attacks can occur even without a prior coronary heart disease diagnosis ([ClevelandClinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). As a result, identifying predictors is necessary for preventing heart attack, and it is our main goal of this study.
   
-  Based on preliminary research, **Body Mass Index (BMI)** is potentially related to heart attack. According to studies, extra fat increases inflammation, insulin resistance, and arterial damage discussing groups that may be more vulnerable or underrepresented ([NIH](https://pmc.ncbi.nlm.nih.gov/articles/PMC8449192/). Moreover, BMI is the primary diagnosing index for obesity, a disease that has impacts 41.9% of U.S. adults ([CDC](https://www.cdc.gov/obesity/adult-obesity-facts/index.html)). Given the wide impacts of obesity on U.S adults, exploring correlation between BMI and heart attack risks can have significant implication to a wide range of U.S populations. As a result, we use **Body Mass Index (BMI)** as the main predictor for heart attack risks in this study.
+  Based on preliminary research, **Body Mass Index (BMI)** is potentially related to heart attack and is chosen as the main predictor of heart attack risks in this study. According to studies, extra fat increases inflammation, insulin resistance, and arterial damage discussing groups that may be more vulnerable or underrepresented ([NIH](https://pmc.ncbi.nlm.nih.gov/articles/PMC8449192/). Moreover, BMI is the primary diagnosing index for obesity, a disease that has impacts 41.9% of U.S. adults ([CDC](https://www.cdc.gov/obesity/adult-obesity-facts/index.html)). Given the wide impacts of obesity on U.S adults, exploring correlation between BMI and heart attack risks can have significant implication to a wide range of U.S populations. As a result, we use **Body Mass Index (BMI)** as the main predictor for heart attack risks in this study.
   
   While BMI is a potential predictor of heart attack, its relationship with heart attack risks may be modulated and confounded by other demographic variables. Thus, in this study, we also explore the interaction between four demographic factors and BMI, and we controlled these covariates by including them in the model. The demographic variables include: **Sex**, **Race**, **Age**, and **Income**. 
   
-  After reviewing established research on cardiovascular disease risk factors, we identified **Body Mass Index** as our main predictor, and we include **Sex**, **Race**, **Age**, and **Income** as covariates in the model. We subset our original 2015 BRFSS dataset, and we only include these variables in our final dataset. With that in mind, let’s look at the specific variables that will guide our exploration.  
+  In our regression model, we use **Body Mass Index** as our main predictor, and we include **Sex**, **Race**, **Age**, and **Income** as covariates in the model. Based on our selection of predictors, we subset our original 2015 BRFSS dataset to only include these variables in our final dataset. With that in mind, let’s look at the specific variables that will guide our exploration.  
 
 - **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
   - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
@@ -59,7 +59,7 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 #### 1) Loading dataset and packages
 
-1. **Install and load packages**: We set up the environment and install the packages necessary for our data analysis below. We in the code below, we load all the installed packages to make the functions within them available to use in our script.
+1. **Install and load packages**: We set up the environment and install the packages necessary for our data analysis below. In the code below, we load all the installed packages to make the functions within them available to use in our script.
 
 ```{r}
 # Load libraries
@@ -74,14 +74,16 @@ library(ggeffects)
 ```
 <br><br>
 
-2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio. The dataset is directly downloaded from CDC website and hasn't been cleaned yet. 
+2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio as data frame **df**, and we shows the first 6 observations of the dataset usnig the function head(). 
 
 ```{r}
 #Load original dataset
 df <- read.csv("~/Documents/GitHub/EDA_Project/data/2015.csv")
+head(df)
 ```
+<br><br>
 
-3. **Selecting relevant variables**: The original dataset has 330 variables. To have a more effective and condense dataset, we only select variables that will be used for future analysis into a new dataset **df1**. These include response variable -- heart attack(`CVDINFR4`), and predictors -- sex(`SEX`), income level(`INCOME2`), race(`X_RACEGR3`), age(`X_AGE80` for numeric; `X_AGEG5YR` for categorical), and BMI(`X_BMI5` for numeric; `X_BMI5CAT` for categorical)
+3. **Selecting relevant variables**: The original dataset **df** has 330 variables. To have a more effective and concise dataset, we subset the dataset to include only include variables that will be used for future analysis. These include response variable -- heart attack(`CVDINFR4`), and predictors -- sex(`SEX`), income level(`INCOME2`), race(`X_RACEGR3`), age(`X_AGE80` for numeric; `X_AGEG5YR` for categorical), and BMI(`X_BMI5` for numeric; `X_BMI5CAT` for categorical). We subset the dataset and import the new dataset as data frame **df1**.
 
 ```{r}
 #Select relevant predictors and dependent variable
@@ -92,54 +94,80 @@ df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_AGE80",
 
 #### 2) Factoring and Renaming Variables 
 
-After selecting response variable and main predictors, we factor variables, rename variables, and detect NA in the dataset. 
+After selecting response variable and main predictors, we redefine our variables in three setps: factor variables, rename variables, and detect NA in the dataset.
 
   **Factor variables**: In the original dataset, all variables are coded as numbers, including categorical values. Thus, we first factor all the predictors by changing numbers into their corresponding categorical labels. We do this by using factor() functions.
   
   **Rename variables**: We also rename variables by storing factored variables into a clearer name.
   
-  **Detect NA**: For NA values, they are encoded as specific numbers for each predictor. The specific values representing NA are written in the 2015 codebook report on CDC website. For example, for response variable heart attack, "7" represents "Don't know", and "9" represents "Refused". We look up for numbers that represent NA for each variable, and we recode these numbers into "NA" using factor() functions.
+  **Detect NA**: For NA values, they are encoded as specific numbers for each predictor. The specific values representing NA are written in the 2015 codebook report on CDC website. We look up for numbers that represent NA for each variable, and we recode these numbers into "NA" using factor() functions.
+<br><br>
 
+**(a)** Response Variable -- HeartAttack
+
+Our response variable Heart Attack is named as `CVDINFR4` in the original dataset and include 4 categories: 1 = No, 2 = Yes, 7 = Don't Know, 9 = Refused. We first factor the variable using function factor(). Specifically, we relabel 1 and 2 into No and Yes, and we relabel 7 and 9 into NA. Then we store the relabeled variable into a new variable `HeartAttack`.
 ```{r}
 # Recode CVDINFR4
 df1$CVDINFR4[df1$CVDINFR4 %in% c(7, 9)] <- NA
-df1$HeartAttack <- ifelse(df1$CVDINFR4 == 1, 1,
-                          ifelse(df1$CVDINFR4 == 2, 0, NA))
-df1$HeartAttack <- factor(df1$HeartAttack, levels = c(0, 1), labels = c("No", "Yes"))
+df1$HeartAttack <- factor(df1$HeartAttack, levels = c(1, 2), labels = c("No", "Yes"))
+```
+<br><br>
 
+**(b)** Main Predictor -- Body Mass Index
+
+Our main predictor Body Mass Index (BMI) is named as `X_BMI5` in the original dataset is numeric discrete variable. We first factor the variable using function factor(). Specifically, we relabel 1 and 2 into No and Yes, and we relabel 7 and 9 into NA. Then we store the relabeled variable into a new variable `HeartAttack`
+```{r}
+# Recode _BMI5 
+df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
+names(df1)[names(df1) == "X_BMI5"] <- "BMI_Num"
+```
+<br><br>
+
+```{r}
+# Recode _BMI5CAT
+df1$BMI_Cat <- factor(df1$`X_BMI5CAT`, levels = 1:4,
+                         labels = c("Underweight", "Normal", "Overweight", "Obese"))
+```
+<br><br>
+
+
+```{r}
 # Recode SEX
 df1$SEX <- factor(df1$SEX, levels = c(1, 2), labels = c("Male", "Female"))
+```
+<br><br>
 
+```{r}
 # Recode INCOME2
 df1$INCOME2[df1$INCOME2 %in% c(77, 99)] <- NA
 df1$INCOME <- factor(df1$INCOME2, levels = c(1:8),
                       labels = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k",
                                  "$35-50k", "$50-75k", ">=75k"))
+```
+<br><br>
 
+```{r}
 # Recode _RACEGR3 as factor with appropriate labels
 df1$`X_RACEGR3`[df1$`X_RACEGR3` == 9] <- NA
 df1$RACE <- factor(df1$`X_RACEGR3`,
                          levels = c(1:5),
                          labels = c("White", "Black", "Other",
                                     "Multiracial", "Hispanic"))
+```
+<br><br>
 
+```{r}
 # Recode _AGEG5YR
 df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
                          labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49",
                                     "50–54", "55–59", "60–64", "65–69", "70–74", "75–79", "80+"))
+```
+<br><br>
 
+```{r}
 # Recode _AGE80 
 names(df1)[names(df1) == "X_AGE80"] <- "AGE_Num"
-
-# Recode _BMI5 
-df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
-names(df1)[names(df1) == "X_BMI5"] <- "BMI_Num"
-
-# Recode _BMI5CAT
-df1$BMI_Cat <- factor(df1$`X_BMI5CAT`, levels = 1:4,
-                         labels = c("Underweight", "Normal", "Overweight", "Obese"))
 ```
-
 <br><br>
 
 #### 3) Handling Missing Values
