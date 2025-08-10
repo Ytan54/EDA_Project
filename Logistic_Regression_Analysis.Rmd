@@ -1,0 +1,271 @@
+---
+title: "Data_Analysis_QTM302W"
+output: html_document
+date: "2025-08-10"
+Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
+---
+#### Load Dataset
+
+```{r}
+df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
+df_clean$BMI_Num <- df_clean$BMI_Num / 100
+```
+
+
+#### 1) Main Model
+
+```{r}
+df_clean$HeartAttack <- as.factor(df_clean$HeartAttack)
+df_clean$SEX <- as.factor(df_clean$SEX)
+df_clean$RACE <- as.factor(df_clean$RACE)
+df_clean$INCOME <- as.factor(df_clean$INCOME)
+```
+<br><br>
+
+**(a)** Heart Attack vs. BMI
+
+```{r}
+#Full model
+df_clean$HeartAttack <- ifelse(df_clean$HeartAttack == "Yes", 1, 0)
+glm_main <- glm(HeartAttack ~ BMI_Num, data = df_clean, family = binomial(logit))
+summary(glm_main)
+```
+
+$H_0$: $\hat{\beta}_{BMI} = 0$
+
+$H_a$: $\hat{\beta}_{BMI} \neq 0$
+
+P-value: < 2.2e-16
+
+**Conclusion**: 
+
+- Individual Z test: at the $\alpha = 0.05$ level of significance, we reject $H_0$. $\hat{\beta}_{BMI}$ is significantly greater than 0, and there is a significant positive association between Body Mass Index (BMI) and the odds of having heart attack
+
+- Slope interpretation: $\hat{\beta}_{BMI} = 0.021960$. An one unit ($kg/m^2$) increase in BMI increases the odds of having heart attack by a multiplicative factor of $e^{0.02196} = 1.022$. A one unit increase in BMI increases the odds of having heart attack by 2.2%.
+<br><br>
+
+#### 2) Extended Model: Heart Attack vs. BMI + Demographic predictors
+
+While BMI shows a significant relationship with odds of having heart attack. Other factors like demographic predictors are also connected to heart attack. Specifically, sex, age, income level, and race are included in the extended model based on the main model with BMI. Their relationship with odds of having heart attack is tested. 
+<br><br>
+
+**(a)** Overall $\chi^2$ Test
+<br><br>
+**Purpose**: overall $\chi^2$ test is firstly performed to test if at least on predictor in the model is significant and if the model is useful for more detailed analysis.
+```{r}
+glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME, data = df_clean, family = binomial(logit))
+glm_null <- glm(HeartAttack ~ 1, data = df_clean, family = binomial(logit))
+anova(glm_null, glm_extend, test = "Chisq")
+```
+
+$H_0$: All slopes = 0
+
+$H_a$: At least one $\beta_j \neq 0$
+
+P-value: < 2.2e-16
+
+**Conclusion**: The p-value is < 2.2e-16, which is less than the significance level of 0.05. Thus, we reject the null hypothesis, and there is at least one significant predictor for odds of having heart attack in the logistic model. 
+<br><br>
+
+**(b)** Partial $\chi^2$ Test
+<br><br>
+**Purpose**: From the overall $X^2$ test, at least one predictor is significant in predicting odds of having heart attack. In the anova table, a more detailed analysis is conducted to test which independent variables are specifically related with odds of having heart attack. Dummy variables for each predictor is combined together.
+
+```{r}
+glm_extend <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME, data = df_clean, family = binomial(logit))
+
+Anova(glm_extend, type="III")
+```
+
+**Conclusion**: From the anova table, all the independent variables show significant relationship with odds of having heart attack. Sex, age, race, and income level have p-values < 2.2e-16.
+<br><br>
+
+**(c)** Individual Z Test
+<br><br>
+**Purpose**: From the partial $\chi^2$ Test, all the independent variables are significantly related with odds of having heart attack. An individual Z Test is further preformed to check differences in odds of having heart attack within levels of each independent variable.
+
+```{r}
+#Baseline Code for Dummy variables
+contrasts(df_clean$SEX)
+contrasts(df_clean$RACE)
+contrasts(df_clean$INCOME)
+```
+
+```{r}
+#Individual Z test
+summary(glm_extend)
+```
+
+**Conclusion**:
+
+1) **Sex**: Men have higher odds of having heart attack.
+
+- Slope interpretation: $\hat{\beta}_{Sex} = 0.9222827$. When keeping every other conditions the same, male have $e^{0.9222827} = 2.515$ times higher odds of having heart attack compared to females.
+<br><br>
+
+2) **Age**: Odds of having heart attack increases as age increases.
+
+- Individual Z test: p-value is < 2e-16
+
+- Slope interpretation: $\hat{\beta}_{Age} = 0.06015$. In this model, when keeping every other conditions the same, an one year increase in age increases the odds of having heart attack by a multiplicative factor of $e^{0.06015} = 1.06343$, it increases the odds by 6.343%.
+<br><br>
+
+3) **Income Level**: Odds of having heart attack decreases when income level increases. 
+
+- **$10-15k**: when comparing to the baseline group (*Less than $10,000*), *$10-15k* income level has $e^{-0.1087} = 0.8970$ times lower odds of having heart attack, it has a lower odds by 10.3%.
+
+- **$15-20k**: when comparing to the baseline group (*Less than $10,000*), *$15-20k* income level has $e^{-0.2909} = 0.7476$ times lower odds of having heart attack, it has a lower odds by 25.24%.
+
+- **$20-25k**: when comparing to the baseline group (*Less than $10,0000*), *$20-25k* income level has $e^{-0.5422} = 0.5815$ times lower odds of having heart attack, it has a lower odds by 41.85%.
+
+- **$25-35k**: when comparing to the baseline group (*Less than $10,000*), *$25-35k* income level has $e^{-0.7404} = 0.4769$ times lower odds of having heart attack, it has a lower odds by 52.31%.
+
+- **$35-50k**: when comparing to the baseline group (*Less than $10,000*), *$35-50k* income level has $e^{-0.9335} = 0.3932$ times lower odds of having heart attack, it has a lower odds by 60.68%.
+
+- **$50-75k**: when comparing to the baseline group (*Less than $10,000*), *$50-75k* income level has $e^{-1.141} = 0.3195$ times lower odds of having heart attack, it has a lower odds by 68.05%.
+<br><br>
+
+4) **Race**: Hispanic people has lowest odds of having heart attack. Within defined race groups, multiracial people has highest odds of having heart attack.
+
+- **Hispanic**: when comparing to the baseline group (*Black*), black people has $e^{-0.1246} = 0.8828$ times lower odds of having heart attack, it has lowered odds by 11.72%.
+
+- **Multiracial**: when comparing to the baseline group (*Black*), people from other race groups has $e^{0.4913} = 1.634$ times higher odds of having heart attack, it has a higher odds by 63.4%.
+
+- **Other**: when comparing to the baseline group (*Black*), multiracial people has $e^{0.1987} = 1.220$ times higher odds of having heart attack, it has a higher odds by 22.0%.
+
+- **White**: when comparing to the baseline group (*Black*), Hispanic people has $e^{0.1727} = 1.189$ times higher odds of having heart attack, it has a higher odds by 18.9%.
+<br><br>
+
+**(c)** Plot Logistic Regression
+<br><br>
+1) Ordinal & Numerical Predictors
+```{r}
+# --- Bar plot for categorical predictor (INCOME) ---
+plot_income_bar <- function(model) {
+  emm <- emmeans(model, ~ INCOME, type = "response")
+  emm_df <- as.data.frame(emm)
+  
+  ggplot(emm_df, aes(x = INCOME, y = prob)) +
+    geom_col(fill = "#1a80bb") +
+    geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2) +
+    scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k",
+                                "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab("Income Level") +
+    ggtitle("Predicted Risk by Income Level") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+# --- Line plot for numeric predictor ---
+plot_numeric_line <- function(model, term, x_label) {
+  pred <- ggpredict(model, terms = term)
+  
+  ggplot(pred, aes(x = x, y = predicted)) +
+    geom_line(color = "blue", size = 1) +
+    geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab(x_label) +
+    ggtitle(paste("Predicted Risk by", x_label)) +
+    theme_minimal()
+}
+
+# --- Generate plots ---
+plot_income  <- plot_income_bar(glm_extend)
+plot_age     <- plot_numeric_line(glm_extend, "AGE_Num", "Age")
+plot_bmi     <- plot_numeric_line(glm_extend, "BMI_Num", "BMI")
+
+# --- View plots ---
+print(plot_income)
+print(plot_age)
+print(plot_bmi)
+```
+<br><br>
+
+2) Categorical Predictors
+```{r}
+plot_predicted_probs <- function(varname, model) {
+  emm <- emmeans(model, as.formula(paste("~", varname)), type = "response")
+  emm_df <- as.data.frame(emm)
+
+  p <- ggplot(emm_df, aes_string(x = varname, y = "prob")) +
+    geom_col(fill = "#1a80bb") +
+    geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2) +
+    ylab("Predicted Probability of Heart Attack") +
+    xlab(varname) +
+    ggtitle(paste("Predicted Risk by", varname)) +
+    theme_minimal()
+
+  # Follow your example: set axis order via scale_x_discrete (plot-only)
+  if (varname == "INCOME") {
+    p <- p +
+      scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k",
+                                  "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+
+  p
+}
+
+# Use with your fitted model glm_extend
+plot_sex        <- plot_predicted_probs("SEX", glm_extend)
+plot_race       <- plot_predicted_probs("RACE", glm_extend)
+plot_income     <- plot_predicted_probs("INCOME", glm_extend)
+
+print(plot_sex)
+print(plot_race)
+print(plot_income)
+```
+<br><br>
+
+**(d)** Multicollinearity for Extended Model
+```{r}
+vif(glm_extend)
+```
+
+**Conclusion**: Based on the variance inflation factor, no multicollinearity is observed between predictors. All predictors have GVIF around 1, suggesting a very low multicollinearity, and each predictor contributes unique information to the model.
+<br><br>
+
+#### 3) Extended Model: Heart Attack vs. BMI + Demographic predictors + Interaction term
+Partial $\chi^2$ test is conducted to test if each interactive term is specifically related with odds of having heart attack Individual levels within each qualitative variable is combined and tested together.  
+```{r}
+glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + Exercise + BMI_Num:SEX + BMI_Num:AGE_Num + BMI_Num:RACE + BMI_Num:INCOME, data = df_clean, family = binomial(logit))
+
+Anova(glm_full, type = "III")
+
+glm_full_revised <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + BMI_Num:RACE, data = df_clean, family = binomial(logit))
+```
+
+**Conclusion**: From the anova table, BMI shows significant interaction effects with race, suggesting that the impact of BMI on heart attack risk is not uniform across race subgroups. Specifically, the relationship between BMI and the odds of having heart attack is moderated by race. Therefore, it cannot be interpreted independently of race factor.
+<br><br>
+
+$$
+\ln\left(\frac{P(\text{Heart Attack} = 1)}{1 - P(\text{Heart Attack} = 1)}\right) =
+\hat{\beta}_0 +
+\hat{\beta}_1 \cdot \texttt{BMI} +
+\hat{\beta}_2 \cdot \texttt{Sex} +
+\hat{\beta}_3 \cdot \texttt{Age} +
+\hat{\beta}_4 \cdot \texttt{Race} +
+\hat{\beta}_5 \cdot \texttt{Income} +
+\hat{\beta}_6 \cdot (\texttt{BMI} \times \texttt{Race})
+$$
+
+#### 4) Goodness of Fit Test
+
+Purpose: after deriving the final model that is the best at predicting odds of having heart attack, error rate is calculated. It aims to assess how well the model predicts the actual odds of heart attack. 
+
+**(a)** Error Rate
+```{r}
+glm.probs <- predict(glm_full_revised, type = "response")
+dim(df_clean)
+glm.pred<-rep(0, length(glm.probs))    #creating empty vector
+glm.pred[glm.probs > 0.5]<-1      #assign >0.5 predicted_Y = 1; if < 0.5 predicted_Y = 0
+table(glm.pred, df_clean$HeartAttack)
+
+#error rate
+error <- (18412+11)/315938
+error
+```
+
+**Conclusion**: The error rate is `r error`, which is around 0.05. Thus, the logistic model is good for predicting odds of having heart attack 
+<br><br>
