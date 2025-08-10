@@ -439,8 +439,6 @@ ggplot(df_clean, aes(x = SEX, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-**Interpretation**: Based on the proportion and bar graph, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. 
 <br><br>
 
 **(c)** Heart Attack vs. Income Level
@@ -463,8 +461,6 @@ ggplot(df_clean, aes(x = INCOME, fill = HeartAttack)) +
   scale_x_discrete(limits = c("<$10k", "$10-15k", "$15-20k", "$20-25k", "$25-35k", "$35-50k", "$50-75k", ">=75k")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-**Interpretation**: Generally, the proportion of individuals having heart attack decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. 
 <br><br>
 
 **(d)** Heart Attack vs. Race
@@ -485,8 +481,7 @@ ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-**Interpretation**: When looking at the bar plot we made, we do see a change in proportions of individuals having heart attack between the different categories of the Race predictor. Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
+<br><br>
 
 **(e)** Heart Attack vs. Age
 
@@ -506,13 +501,13 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-**Interpretation**: Here we see a strong positive correlation between Age and the proportion of heart attacks. As the ages get higher and higher, so does the proportion of participants who noted that they did have a heart attack.
 <br><br>
 
 #### 3) Conclusion
 
-
+  Based on the correlation analysis, a positive correlation is observed between main predictor BMI and heart attack risks. When increasing BMI from normal group (BMI = 18.5-24.9) to obese group (BMI ≥ 30.0), the percentage of individuals with heart attack increases from 4.3% to 7.2%. This suggests BMI as a potential predictor of heart attack risks.
+  
+  Besides BMI, the proportion of individuals with heart attack also varies across categorical levels in all demographic variables. It indicates that all the demographic variables are potential confounding variables and must be controlled in the future model. Specifically, for **sex**, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. For **age**, there is a strong positive correlation between age and the proportion of heart attacks. As the ages get higher and higher, the proportion also increases. For **income**, the proportion decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. For **race**, Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
 
 ### IV. Next Step
 
