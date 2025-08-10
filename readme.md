@@ -31,7 +31,7 @@ The `renv.lock` file contains the exact versions of all packages needed for this
 - emmeans
 - ggeffects
 
-### HOW TO USE REPOSITORY
+### Instruction
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Ytan54/EDA_Project.git
