@@ -8,7 +8,7 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 **Team Members**: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
-### I. INTRODUCTION
+### I. Introduction
 
 #### 1) Introducing the Dataset
 
@@ -253,7 +253,7 @@ cat("Head_Attack\n")
 cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 ```
 
-**Conclusion**: Based on the mode calculation, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size.
+**Interpretation**: Based on the mode calculation, No is dominantly observed over Yes, meaning more people who filled out the questionnaire doesn’t have heart attack. However, there is still a sufficient amount of observations having heart attack, with an occurrence of 18,674, which is about 5.85% of the total sample size.
 <br><br>
 
 **(b)** Predictor -- BMI
@@ -279,7 +279,7 @@ cat("Median:", median(df_clean$BMI_Num, na.rm = TRUE), "\n")
 cat("Mean:", mean(df_clean$BMI_Num, na.rm = TRUE), "\n\n")
 ```
 
-**Conclusion**: We find that this distribution is skewed to the right, with a large tail that stretches towards the higher BMI values. This means that we have a very comprehensive distribution for the lower BMI values, but due to the large tail and few values at the higher end of range, our statistics such as mean (2820.969) and median (2712) are being skewed to the right. 
+**Interpretation**: We find that this distribution is skewed to the right, with a large tail that stretches towards the higher BMI values. This means that we have a very comprehensive distribution for the lower BMI values, but due to the large tail and few values at the higher end of range, our statistics such as mean (2820.969) and median (2712) are being skewed to the right. 
 <br><br>
 
 **(c)** Predictor -- Sex
@@ -303,7 +303,7 @@ cat("Sex\n")
 cat("Mode:", get_mode(df_clean$SEX), "\n\n")
 ```
 
-**Conclusion**:  Based on the mode calculation, female is dominantly observed over male (54.99% vs. 45.01%). This is something notable to consider when looking at other results from distributions and linear regression, as the subject's sex isn't evenly distributed, rather leaning more towards a higher count of female participants than of the male sex.
+**Interpretation**:  Based on the mode calculation, female is dominantly observed over male (54.99% vs. 45.01%). This is something notable to consider when looking at other results from distributions and linear regression, as the subject's sex isn't evenly distributed, rather leaning more towards a higher count of female participants than of the male sex.
 <br><br>
 
 **(d)** Predictor -- Income
@@ -327,7 +327,7 @@ cat("Income\n")
 cat("Mode:", get_mode(df_clean$INCOME), "\n")
 ```
 
-**Conclusion**: The Income distribution is skewed to the left, with most subjects (or the mode) belonging to the income group of over 75 thousand dollars in income per year. This means that we have a lot more subjects that had a higher income value than other income groups.
+**Interpretation**: The Income distribution is skewed to the left, with most subjects (or the mode) belonging to the income group of over 75 thousand dollars in income per year. This means that we have a lot more subjects that had a higher income value than other income groups.
 <br><br>
 
 **(e)** Predictor -- Race
@@ -351,7 +351,7 @@ cat("Race\n")
 cat("Mode:", get_mode(df_clean$RACE), "\n\n")
 ```
 
-**Conclusion**: When looking at the predictor of Race, the distribution is highly imbalanced, with the mode of the data belonging to the race group of "White" (78.5% of the dataset). This distribution also tells us to be weary for the other parts of our study, as there isn't a proportionate distribution of all groups, which limits the results of our findings to other groups of the predictor.
+**Interpretation**: When looking at the predictor of Race, the distribution is highly imbalanced, with the mode of the data belonging to the race group of "White" (78.5% of the dataset). This distribution also tells us to be weary for the other parts of our study, as there isn't a proportionate distribution of all groups, which limits the results of our findings to other groups of the predictor.
 <br><br>
 
 **(f)** Predictor -- Age
@@ -377,7 +377,7 @@ cat("Median:", median(df_clean$AGE_Num, na.rm = TRUE), "\n")
 cat("Mean:", mean(df_clean$AGE_Num, na.rm = TRUE), "\n\n")
 ```
 
-**Conclusion**: This Age distribution is skewed to the left, with more participants at older ages, and it has a median of 55-59. This makes our results much more comprehensive for ages across our range.
+**Interpretation**: This Age distribution is skewed to the left, with more participants at older ages, and it has a median of 55-59. This makes our results much more comprehensive for ages across our range.
 <br><br>
 
 #### 2) Correlation Analysis
@@ -418,7 +418,7 @@ ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: We do see a difference in proportion of heart attacks across the different categories of BMI. Obese group is having the highest proportion of having heart attack followed by underweight. Normal group has the lowest proportion of having heart attack.
+**Interpretation**: We do see a difference in proportion of heart attacks across the different categories of BMI. Obese group is having the highest proportion of having heart attack followed by underweight. Normal group has the lowest proportion of having heart attack.
 <br><br>
 
 **(b)** Heart Attack vs. Sex
@@ -440,7 +440,7 @@ ggplot(df_clean, aes(x = SEX, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: Based on the proportion and bar graph, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. 
+**Interpretation**: Based on the proportion and bar graph, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. 
 <br><br>
 
 **(c)** Heart Attack vs. Income Level
@@ -464,7 +464,7 @@ ggplot(df_clean, aes(x = INCOME, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: Generally, the proportion of individuals having heart attack decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. 
+**Interpretation**: Generally, the proportion of individuals having heart attack decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. 
 <br><br>
 
 **(d)** Heart Attack vs. Race
@@ -486,7 +486,7 @@ ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: When looking at the bar plot we made, we do see a change in proportions of individuals having heart attack between the different categories of the Race predictor. Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
+**Interpretation**: When looking at the bar plot we made, we do see a change in proportions of individuals having heart attack between the different categories of the Race predictor. Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
 
 **(e)** Heart Attack vs. Age
 
@@ -507,12 +507,16 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-**Conclusion**: Here we see a strong positive correlation between Age and the proportion of heart attacks. As the ages get higher and higher, so does the proportion of participants who noted that they did have a heart attack.
+**Interpretation**: Here we see a strong positive correlation between Age and the proportion of heart attacks. As the ages get higher and higher, so does the proportion of participants who noted that they did have a heart attack.
 <br><br>
 
-### IV. Methodology
+#### 3) Conclusion
 
-  In this project, **HeartAttack** is selected as the response variable. Because it is a binary variable describing whether or not the respondent has heart attack (1=yes, 0=no), it will be logit transformed into logit (P(HeartAttack)). Logistic regression will be used for predicting odds of having heart attack.
+
+
+### IV. Next Step
+
+  In this project,  **HeartAttack** is selected as the response variable. Because it is a binary variable describing whether or not the respondent has heart attack (1=yes, 0=no), it will be logit transformed into logit (P(HeartAttack)). Logistic regression will be used for predicting odds of having heart attack.
 
   In the bar graphs, for each predictor, we visualize proportion of individuals with heart attack across different categories. Based on this preliminary analysis, we have observed correlations between 5 selected predictors with response variable **HeartAttack**. Significant predictors include **SEX**, **Income**, **AGE**,**Race**. Proportions of individuals with heart attack vary across different categorical levels, and it is observed in these predictors.  
 
