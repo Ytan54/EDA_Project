@@ -8,63 +8,54 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 **Team Members**: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
-### I. INTRODUCTION:
+### I. INTRODUCTION
 
 #### 1) Introducing the Dataset
 
-  The dataset used in this analysis comes from the 2015 Behavioral Risk Factor Surveillance System (BRFSS)—a nationwide health survey conducted by the Centers for Disease Control and Prevention (CDC) in collaboration with U.S. states and territories. For simplicity, we will refer to it as BRFSS throughout the analysis. The 2015 BRFSS includes 330 columns and 441,456 observations. Data are collected annually through telephone interviews, both landline and cellular, targeting adults aged 18 and older living in noninstitutionalized, community-based settings.
+  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)**—a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both landline and cellular, reaching adults aged 18 and older living in community settings.  
 
-  The primary objective of BRFSS is to monitor health-related risk behaviors, chronic conditions, and use of preventive services across the U.S. population. In 2015, the survey was administered in all 50 states, the District of Columbia, Puerto Rico, and Guam—producing one of the most comprehensive public datasets on health behaviors. The data are weighted to reflect state-level populations and are widely used by public health officials to guide policy decisions, allocate resources, and track trends over time. 
+  The BRFSS was designed to track health-related risk behaviors, chronic conditions, and use of preventive care across the U.S. In 2015, it spanned all 50 states, the District of Columbia, Puerto Rico, and Guam, giving us a rich, representative snapshot of health behaviors nationwide. The dataset is weighted so its findings reflect state-level populations—making it a trusted source for public health planning, policy-making, and resource allocation.  
+  
+  We chose the **2015 BRFSS** dataset for both practical and methodological reasons that matter for our exploration. More recent datasets have **gaps in state coverage**—for example, the 2023 survey omits large states such as Pennsylvania and Kentucky—which could make national estimates less reliable. On top of that, starting in 2016, the BRFSS structure changed to comply with **federal executive orders**, altering how variables such as race, ethnicity, and health equity are recorded. While these changes were meant to improve transparency, they also created inconsistencies that make it harder to compare across years.  
 
-  From an ethical standpoint, BRFSS adheres to rigorous protocols to protect respondent confidentiality. All data are fully de-identified prior to public release and reported only at the aggregate level. Although the dataset is exempt from formal Institutional Review Board (IRB) oversight due to its public and anonymized nature, we strive to approach the analysis with care to avoid misinterpretation or overgeneralization, particularly when examining outcomes for vulnerable or underrepresented populations.
+  The 2015 dataset avoids these problems. Its structure is stable, widely used in research, and allows us to establish a **clean baseline** for potential comparison with newer datasets, including the upcoming 2025 BRFSS. Working with this version means we can focus on meaningful patterns in the data without worrying about major shifts in survey design. 
 <br><br>
 
-#### 2) Description of Selected Variables
+#### 2) Research Interest
 
-- **HeartAttack**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
-  - 1 = Yes - 2 = No   
+  Within this dataset, our main outcome of interest is **heart attack history** (`CVDINFR4`). This choice is deliberate: heart attacks are urgent, life-threatening events that demand immediate medical attention ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)), and they can occur even without a prior coronary heart disease diagnosis ([Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). The 2015 BRFSS contains enough reported cases to give our analysis strong statistical power, and the outcome’s public health weight is significant—about one in five cardiovascular deaths in the U.S. are due to heart attacks ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).  
+  
+  As we move through this analysis, we aim not only to uncover statistical patterns but also to interpret them responsibly, especially when discussing groups that may be more vulnerable or underrepresented. 
+
+  By focusing on this outcome, our journey through the data will center on how demographic, behavioral, and health history factors connect to heart attack risk. With that in mind, let’s look at the specific variables that will guide our exploration.  
+<br><br>
+
+#### 3) Description of Selected Variables
+
+  After reviewing established research on cardiovascular disease risk factors, we selected variables that capture demographic, health, and behavioral characteristics relevant to understanding heart attack risk:  
+
+- **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
+  - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
 
 - **SEX**: Biological sex of the respondent.  
   - 1 = Male - 2 = Female  
 
-- **INCOME**: Annual household income from all sources, in categorical brackets.  
-  - 1–8 = Ranges from < $10,000 to ≥ $75,000  
+- **INCOME2**: Annual household income from all sources, in categorical brackets.  
+  - 1–8 = Ranges from < $10,000 to ≥ $75,000 - 77 = Don’t know - 99 = Refused  
 
-- **RACE**: Race group (recoded into 5 categories).  
-  - 1 = White only - 2 = Black only - 3 = Other race only - 4 = Multiracial - 5 = Hispanic
+- **X_RACEGR3**: Race group (recoded into 3 categories).  
+  - 1 = White only - 2 = Black only - 3 = Other or multiracial  
 
-- **AGE**: Imported Age  
-  - Discrete numeric variable  
+- **X_AGEG5YR**: Age group in 5-year intervals.  
+  - 1 = 18–24 - 2 = 25–29 - ... - 13 = 80+  
 
-- **BMI_Num**: Body Mass Index (BMI) 
-  - Continuous variable  
+- **X_BMI5**: Body Mass Index (BMI), calculated as BMI × 100.  
+  - Continuous variable: Divide by 100 to get actual BMI  
 
-- **BMI_Cat**: BMI category based on X_BMI5.  
+- **X_BMI5CAT**: BMI category based on X_BMI5.  
   - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
 
-- **HealthCare**: Whether respondent currently has any health care coverage.  
-  - 1 = Yes - 2 = No 
-<br><br>
-
-#### 3) Research Interest
-
-  We focus on the 2015 BRFSS dataset ([BRFSS 2015 Dataset](https://www.kaggle.com/datasets/cdc/behavioral-risk-factor-surveillance-system/data) in this analysis for both practical and historical reasons. As BRFSS is a repeated annual survey, selecting a past year like 2015 allows us to lay the groundwork for decade-long comparisons with newer datasets, such as the 2025 BRFSS. Notably, more recent datasets have limitations in coverage. For example, the 2023 dataset lacks data from several large states, including Pennsylvania and Kentucky, potentially compromising the representativeness and completeness of national estimates.
-
-  In addition, BRFSS datasets from 2016 onward has been modified to comply with Trump executive orders, including adjustments in how federal health agencies presented and coded data—especially regarding race, ethnicity, and health equity. While some of these changes aimed to improve data transparency, and alignment with federal guidelines, they also introduced inconsistencies in demographic variables that can complicate subgroup comparisons and make patterns harder to interpret.
-
-  By contrast, the 2015 dataset offers a more stable and widely used structure, making it easier to replicate established methods and ensure interpretability. It also predates politically motivated changes in public health messaging, which is important when exploring socially sensitive outcomes like cardiovascular disease risk across race and income groups.
-
-  In this project, we specifically focus on **heart attack** (variable: `CVDINFR4`) as the response variable, rather than broader cardiovascular conditions such as **angina or coronary heart disease** (`CVDCRHD4`). This decision is based on several factors:
-
-- **Higher prevalence**: In the 2015 dataset, there are more reported cases of heart attack than angina or CHD, giving us more statistical power.
-
-- **Clinical severity**: Heart attacks are typically more immediately life-threatening and often require urgent medical care, making them a strong marker of cardiovascular crisis.([NIH](https://www.nhlbi.nih.gov/health/heart-attack)).
-
-* **Distinct diagnosis**: It is possible to experience a heart attack without a prior diagnosis of coronary heart disease, so using heart attack as a primary outcome helps avoid selection bias based on access to preventive diagnostics ([Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)).
-
-- **Public health significance**: According to the CDC, heart attacks contribute to roughly one in every five deaths from cardiovascular disease in the U.S., emphasizing their impact on morbidity and mortality ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).
-
-  By focusing on heart attacks, we aim to investigate behavioral and demographic risk factors associated with this critical health outcome and identify population groups that may benefit most from targeted interventions.
+  Taken together, these variables give us a balanced mix of demographic indicators, medical history, and lifestyle behaviors. They set the stage for uncovering how different aspects of a person’s life may interact when it comes to heart attack risk. The next step in our exploration will be preparing and transforming the data so we can uncover these relationships in a clear, systematic way.
 <br><br>
 
 ### II. Dataset Manipulation
