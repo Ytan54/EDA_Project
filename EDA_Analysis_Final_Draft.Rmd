@@ -12,27 +12,24 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 #### 1) Introducing the Dataset
 
-  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)**—a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both landline and cellular, reaching adults aged 18 and older living in community settings.  
+  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)**—a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both land-line and cellular, reaching adults aged 18 and older living in community settings.  
 
-  The BRFSS was designed to track health-related risk behaviors, chronic conditions, and use of preventive care across the U.S. In 2015, it spanned all 50 states, the District of Columbia, Puerto Rico, and Guam, giving us a rich, representative snapshot of health behaviors nationwide. The dataset is weighted so its findings reflect state-level populations—making it a trusted source for public health planning, policy-making, and resource allocation.  
+  The BRFSS was designed to track health-related risk behaviors, chronic conditions, and use of preventive care across the U.S. In 2015, it collected information from 441,456 individuals, and the result spanned over all 50 states, the District of Columbia, Puerto Rico, and Guam. Having a large and representative sample sizes, the dataset give us a rich and reliable snapshot of health behaviors nationwide. The dataset also include 330 columns, which allows us to have a wide range of variables to explore and test on. 
   
-  We chose the **2015 BRFSS** dataset for both practical and methodological reasons that matter for our exploration. More recent datasets have **gaps in state coverage**—for example, the 2023 survey omits large states such as Pennsylvania and Kentucky—which could make national estimates less reliable. On top of that, starting in 2016, the BRFSS structure changed to comply with **federal executive orders**, altering how variables such as race, ethnicity, and health equity are recorded. While these changes were meant to improve transparency, they also created inconsistencies that make it harder to compare across years.  
-
-  The 2015 dataset avoids these problems. Its structure is stable, widely used in research, and allows us to establish a **clean baseline** for potential comparison with newer datasets, including the upcoming 2025 BRFSS. Working with this version means we can focus on meaningful patterns in the data without worrying about major shifts in survey design. 
+  Beside having a large sample sizes, **2015 BRFSS** dataset also have other practical and methodological reasons that matter for our exploration. Firstly, the dataset is weighted so its findings reflect state-level populations—making it a trusted source for public health planning, policy-making, and resource allocation. Secondly, more recent datasets have **gaps in state coverage** -- for example, the 2023 survey omits large states such as Pennsylvania and Kentucky—which could make national estimates less reliable. Thus, compare to other dataset, **2015 BRFSS** dataset provides a more representative and comprehensive insight into the U.S populations, providing a reliable data for research purposes. 
 <br><br>
 
 #### 2) Research Interest
 
-  Within this dataset, our main outcome of interest is **heart attack history** (`CVDINFR4`). This choice is deliberate: heart attacks are urgent, life-threatening events that demand immediate medical attention ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)), and they can occur even without a prior coronary heart disease diagnosis ([Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). The 2015 BRFSS contains enough reported cases to give our analysis strong statistical power, and the outcome’s public health weight is significant—about one in five cardiovascular deaths in the U.S. are due to heart attacks ([CDC, 2023](https://www.cdc.gov/heartdisease/facts.htm)).  
+  The original dataset has 330 columns, making it hard to track specific variables that we are going to use in this research. Thus, we subset the dataset by only selecting variables related to the research in our final dataset. 
   
-  As we move through this analysis, we aim not only to uncover statistical patterns but also to interpret them responsibly, especially when discussing groups that may be more vulnerable or underrepresented. 
-
-  By focusing on this outcome, our journey through the data will center on how demographic, behavioral, and health history factors connect to heart attack risk. With that in mind, let’s look at the specific variables that will guide our exploration.  
-<br><br>
-
-#### 3) Description of Selected Variables
-
-  After reviewing established research on cardiovascular disease risk factors, we selected variables that capture demographic, health, and behavioral characteristics relevant to understanding heart attack risk:  
+  Our main outcome of interest is **heart attack** (`CVDINFR4`). This choice is deliberate: heart attacks are urgent, affecting 17.9 millions of lives each year. Thus, it demands immediate medical attention ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)). However, heart attacks can occur even without a prior coronary heart disease diagnosis ([ClevelandClinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). As a result, identifying predictors is necessary for preventing heart attack, and it is our main goal of this study.
+  
+  Based on preliminary research, **Body Mass Index (BMI)** is potentially related to heart attack. According to studies, extra fat increases inflammation, insulin resistance, and arterial damage discussing groups that may be more vulnerable or underrepresented ([NIH](https://pmc.ncbi.nlm.nih.gov/articles/PMC8449192/). Moreover, BMI is the primary diagnosing index for obesity, a disease that has impacts 41.9% of U.S. adults ([CDC](https://www.cdc.gov/obesity/adult-obesity-facts/index.html)). Given the wide impacts of obesity on U.S adults, exploring correlation between BMI and heart attack risks can have significant implication to a wide range of U.S populations. As a result, we use **Body Mass Index (BMI)** as the main predictor for heart attack risks in this study.
+  
+  While BMI is a potential predictor of heart attack, its relationship with heart attack risks may be modulated and confounded by other demographic variables. Thus, in this study, we also explore the interaction between four demographic factors and BMI, and we controlled these covariates by including them in the model. The demographic variables include: **Sex**, **Race**, **Age**, and **Income**. 
+  
+  After reviewing established research on cardiovascular disease risk factors, we identified **Body Mass Index** as our main predictor, and we include **Sex**, **Race**, **Age**, and **Income** as covariates in the model. We subset our original 2015 BRFSS dataset, and we only include these variables in our final dataset. With that in mind, let’s look at the specific variables that will guide our exploration.  
 
 - **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
   - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
@@ -55,7 +52,7 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 - **X_BMI5CAT**: BMI category based on X_BMI5.  
   - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
 
-  Taken together, these variables give us a balanced mix of demographic indicators, medical history, and lifestyle behaviors. They set the stage for uncovering how different aspects of a person’s life may interact when it comes to heart attack risk. The next step in our exploration will be preparing and transforming the data so we can uncover these relationships in a clear, systematic way.
+  Taken together, these variables give us a comprehensive prediction on heart attack risks. The next step in our exploration will be preparing and transforming the data so we can uncover these relationships in a clear, systematic way.
 <br><br>
 
 ### II. Dataset Manipulation
