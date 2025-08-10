@@ -16,13 +16,23 @@ REPOSITORY STRUCTURE
 - **readme.md**: Project overview and usage instructions.
 
 HOW TO USE REPOSITORY
+1. Clone the repository:
 ```bash
 # Clone the repository
 git clone https://github.com/Ytan54/EDA_Project.git
+```
 
+2. Navigate into the project folder:
+```bash
 # Move into the project folder
 cd EDA_Project
+```
 
+3. Open and run scripts in Code/ using RStudio.
+```bash
 # Run an R script (example)
 Rscript Code/EDA_Analysis_Final_Draft.Rmd
+```
+
+4. Data for analysis is located in Data/cleaned_data.csv.
 
