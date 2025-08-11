@@ -13,7 +13,7 @@ This project aims to develop a predictive model for assessing heart attack risk 
 
 ## REPOSITORY STRUCTURE
 - **Code/**: Contains R scripts and R Markdown files for analysis.
-- **Data/**: Contains cleaned datasets and a README describing data details.
+- **Data/**: Contains cleaned dataset of 2015 BRFSS Survey.
 - **Results/**: (If applicable) Stores output tables and plots.
 - **readme.md**: Project overview and usage instructions.
 
