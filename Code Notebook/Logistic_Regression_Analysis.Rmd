@@ -4,13 +4,26 @@ output: html_document
 date: "2025-08-10"
 Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 ---
+#### Load Libraries
+```{r}
+# Load libraries
+library(ggplot2)
+library(car)
+library(carData)
+library(ResourceSelection)
+library(pROC)
+library(dplyr)
+library(emmeans)
+library(ggeffects)
+```
+<br><br>
+
 #### Load Dataset
 
 ```{r}
 df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
-df_clean$BMI_Num <- df_clean$BMI_Num / 100
 ```
-
+<br><br>
 
 #### 1) Main Model
 
@@ -229,7 +242,7 @@ vif(glm_extend)
 #### 3) Extended Model: Heart Attack vs. BMI + Demographic predictors + Interaction term
 Partial $\chi^2$ test is conducted to test if each interactive term is specifically related with odds of having heart attack Individual levels within each qualitative variable is combined and tested together.  
 ```{r}
-glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + Exercise + BMI_Num:SEX + BMI_Num:AGE_Num + BMI_Num:RACE + BMI_Num:INCOME, data = df_clean, family = binomial(logit))
+glm_full <- glm(HeartAttack ~ BMI_Num + SEX + AGE_Num + RACE + INCOME + BMI_Num:SEX + BMI_Num:AGE_Num + BMI_Num:RACE + BMI_Num:INCOME, data = df_clean, family = binomial(logit))
 
 Anova(glm_full, type = "III")
 
