@@ -74,12 +74,11 @@ library(ggeffects)
 ```
 <br><br>
 
-2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio as data frame **df**, and we shows the first 6 observations of the dataset using the function head(). 
+2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio as data frame **df**.
 
 ```{r}
 #Load original dataset
 df <- read.csv("~/Documents/GitHub/EDA_Project/data/2015.csv")
-head(df)
 ```
 <br><br>
 
@@ -101,7 +100,6 @@ After selecting the response variable and main predictors, we redefine our varia
 -- **Rename variables**: For clarity, we store the factored variables under more descriptive names.  
 
 -- **Detect NA values**: In the BRFSS dataset, missing values are encoded as specific numeric codes for each variable (as documented in the 2015 BRFSS codebook available on the CDC website). We identify these codes for each variable and recode them to `NA` using the `factor()` function.
-
 <br><br>
 
 **(a)** Response Variable -- HeartAttack
@@ -111,7 +109,7 @@ Our response variable, **Heart Attack**, is stored as `CVDINFR4` in the original
 ```{r}
 # Recode CVDINFR4
 df1$CVDINFR4[df1$CVDINFR4 %in% c(7, 9)] <- NA
-df1$HeartAttack <- factor(df1$HeartAttack, levels = c(1, 2), labels = c("No", "Yes"))
+df1$HeartAttack <- factor(df1$CVDINFR4, levels = c(1, 2), labels = c("Yes", "No"))
 ```
 <br><br>
 
@@ -125,7 +123,6 @@ df1$`X_BMI5`[df1$`X_BMI5` == 9999] <- NA
 names(df1)[names(df1) == "X_BMI5"] <- "BMI_Num"
 df1$BMI_Num <- df1$BMI_Num / 100
 ```
-<br><br>
 
 While BMI as a numeric variable is used in the regression model, BMI as a categorical variable with four categories is used in the EDA analysis and bar graphs. In the original dataset, this variable is stored as `X_BMI5CAT` and contains four categories: `1 = Underweight`, `2 = Normal`, `3 = Overweight`, and `4 = Obese`. We convert the numeric codes to descriptive labels using the `factor()` function and store the relabeled variable in a new variable, `BMI_Cat`.
 
@@ -181,7 +178,6 @@ The fourth demographic predictor, **Age**, is stored as `X_AGE80` in the origina
 # Recode _AGE80 
 names(df1)[names(df1) == "X_AGE80"] <- "AGE_Num"
 ```
-<br><br>
 
 While age as a numeric variable is used in the regression model, age as a categorical variable with 13 categories is used in the EDA analysis and bar graphs. In the original dataset, this variable is stored as `X_AGEG5YR` and contains 13 ordered categories. We convert the numeric codes into descriptive labels using the `factor()` function and store the relabeled variable as `AGE`.
 
@@ -213,14 +209,13 @@ The final cleanded dataset is imported into R for future analysis using read.csv
 ```{r}
 df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
 ```
-
+<br><br>
 
 ### III. Data Visualization and Tendency Measurement
 
 #### 1) Frequency Distribution of Heart Attack and Predictors
 
 **Visualization**: After obtaining the cleaned dataset, we visualize the distribution of the response variable **HeartAttack** and the five predictors. We also measure the central tendency using the mode, median, or mean, depending on whether the variable is categorical, ordinal, or numeric. For distribution statistics, we first calculate the frequency of observations within each category using `table()`, then convert frequencies to proportions using `prop.table()`. For visualization, we create bar graphs showing the proportion of observations in each category using the `ggplot()` function.  
-<br><br>
 
 **Define Mode Function for Central Tendency Measurement**:  
 We define a custom function `get_mode()` to calculate the mode, which will be used later for central tendency measurement. The function takes a vector as input, generates a frequency table, and returns the value with the highest frequency.
@@ -392,7 +387,6 @@ cat("Mean:", mean(df_clean$AGE_Num, na.rm = TRUE), "\n\n")
 Moving beyond visualizing distribution, for each predictor, we examine how the proportion of participants with **HeartAttack** varies across different categorical levels. This analysis provides an initial insight into the potential significance of each predictor and hints at the possible sign of the coefficients in a regression analysis on **HeartAttack**.  
 
 For distribution statistics, we calculate the proportion of individuals with heart attack within each category of the predictor using the `prop.table()` function. For visualization, we use bar graphs created with `ggplot()` to display the proportion of participants with heart attack in each category.
-<br><br>
 
 We first define the main theme color for the future bar graphs
 ```{r}
@@ -528,11 +522,10 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
 
 ### IV. Next Step
 
-  Our preliminary analysis revealed clear differences in heart attack prevalence across `BMI` levels and demographic variables. Specifically, higher `BMI` values were associated with a greater proportion of heart attack cases, and similar trends were observed for older `AGE`, lower `INCOME`, being male (`SEX`), and certain `RACE` groups. These patterns suggest that `BMI` may be an important predictor of heart attack risk, and that demographic factors may confound or modify this relationship.  
+  Our preliminary analysis revealed clear differences in heart attack prevalence across `BMI` levels and demographic groups. People with higher `BMI` were more likely to report having had a heart attack, and similar patterns appeared for older `AGE`, lower `INCOME`, being male (`SEX`), and certain `RACE` groups. These patterns suggest that `BMI` could be an important predictor of heart attack risk. However, factors like age or income might also be linked to both `BMI` and heart attack risk at the same time -- meaning they could influence the relationship we see between `BMI` and heart attacks. To give a hypothetical example, being male could be associated with a higher chance of arterial stiffening and a tendency to have lower `BMI` on average. If we didn’t account for `SEX`, we might mistakenly think `BMI` has a weaker or stronger effect than it really does. Controlling for such confounding variables helps us isolate the effect of `BMI` from the effects of these other factors.
 
-  Building on these findings, the main objective of this project is to model the odds of `HeartAttack` with `BMI` as the primary predictor, while controlling for potential confounders -- `SEX`, `INCOME`, `AGE`, and `RACE` -- identified from the EDA. This approach allows us to quantify the association between `BMI` and `HeartAttack` risk while accounting for demographic differences observed in the descriptive analysis.  
+  Building on these findings, the main objective of this project is to model the odds of `HeartAttack` with `BMI` as the primary predictor, while controlling for potential confounders -- `SEX`, `INCOME`, `AGE`, and `RACE` -- identified from the EDA. This approach allows us to quantify the association between `BMI` and `HeartAttack` risk while accounting for demographic differences observed in the descriptive analysis.
 
-  In the main logistic regression model, `BMI` will be the sole predictor, with its statistical significance assessed using individual *Z*-tests. The extended model will add `SEX`, `INCOME`, `RACE`, and `AGE` as covariates. Because these covariates are categorical, we will evaluate how the odds of `HeartAttack` change between categories. Their overall contribution will be assessed with partial $\chi^2$ tests, and differences between levels will be further examined through individual *Z*-tests. Variables that do not show significant differences will be excluded from the final model.  
+  In the main logistic regression model, `BMI` will be the sole predictor, with its statistical significance assessed using individual Z-tests (a method that checks if the effect we see is large enough to be unlikely due to random chance). The extended model will add `SEX`, `INCOME`, `RACE`, and `AGE` as covariates. Because these covariates are categorical variables instead of continuous values, we will evaluate how the odds of `HeartAttack` change between categories. Their overall contribution will be assessed with partial $\chi^2$ tests, which compare models with and without a variable to see if adding it improves prediction, and differences between levels will be further examined through individual Z-tests. Variables that do not show significant differences will be excluded from the final model.
 
-  The final extended model will be validated for robustness: influential data points will be identified using Cook’s distance, regression outliers will be assessed with outlier tests, and multicollinearity will be checked using **Variance Inflation Factor (VIF)**. Model performance will be evaluated using goodness-of-fit measures, including the error rate test, to assess predictive accuracy.
-<br><br>
+  The final extended model will be validated for robustness: multicollinearity will be checked using Variance Inflation Factor (VIF) to see if predictors are too strongly related to each other, which can distort results. Model performance will be evaluated using the error rate test.
