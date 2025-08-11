@@ -12,44 +12,44 @@ Author: Yumeng Tan, Sherelle Li, Rom Zuckerman
 
 #### 1) Introducing the Dataset
 
-  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)** -- a nationwide health survey run each year by the **Centers for Disease Control and Prevention (CDC)** in partnership with U.S. states and territories. The survey is conducted through telephone interviews, both land-line and cellular, reaching adults aged 18 and older living in community settings.  
+  For this project, we work with data from the **2015 Behavioral Risk Factor Surveillance System (BRFSS)** -- a nationwide health survey run each year by the Centers for Disease Control and Prevention (CDC) in partnership with U.S. states and territories ([CDC](https://www.kaggle.com/datasets/cdc/behavioral-risk-factor-surveillance-system?select=2015.csv)). The survey is conducted through telephone interviews, both land-line and cellular, reaching adults aged 18 and older living in community settings.  
 
-  The BRFSS was designed to track health-related risk behaviors, chronic conditions, and use of preventive care across the U.S. In 2015, it collected information from 441,456 individuals, and the result spanned over all 50 states, the District of Columbia, Puerto Rico, and Guam. Having a large and representative sample sizes, the dataset give us a rich and reliable snapshot of health behaviors nationwide. The dataset also include 330 columns, which allows us to have a wide range of variables to explore and test on. 
+  The BRFSS is designed to monitor health-related risk behaviors, chronic conditions, and preventive care usage across the United States. In 2015, it collected responses from 441,456 individuals, covering all 50 states, the District of Columbia, Puerto Rico, and Guam. Its large, nationally representative sample offers a rich and reliable snapshot of health behaviors. With 330 variables, the dataset provides extensive opportunities for exploration and analysis.
   
-  Beside having a large sample sizes, **2015 BRFSS** dataset also have other practical and methodological reasons that matter for our exploration. Firstly, the dataset is weighted so its findings reflect state-level populations—making it a trusted source for public health planning, policy-making, and resource allocation. Secondly, more recent datasets have **gaps in state coverage** -- for example, the 2023 survey omits large states such as Pennsylvania and Kentucky—which could make national estimates less reliable. Thus, compare to other dataset, **2015 BRFSS** dataset provides a more representative and comprehensive insight into the U.S populations, providing a reliable data for research purposes. 
+  Beyond its size, the 2015 BRFSS has methodological advantages. First, the dataset is weighted to reflect state-level populations, making it a trusted source for public health planning, policy-making, and resource allocation. Second, more recent surveys have gaps in state participation—for example, the 2023 BRFSS excludes large states such as Pennsylvania and Kentucky—potentially reducing the reliability of national estimates. By contrast, the 2015 BRFSS offers complete state coverage, making it one of the most representative and comprehensive datasets for studying the U.S. population.
 <br><br>
 
 #### 2) Research Interest
 
-  The original dataset has 330 columns, making it hard to track specific variables that we are going to use in this research. Thus, we subset the dataset by only selecting variables related to the research in our final dataset. 
-  
-  Our main outcome of interest is **heart attack** (`CVDINFR4`). This choice is deliberate: heart attacks are urgent, affecting 17.9 millions of lives each year. Thus, it demands immediate medical attention ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)). However, heart attacks can occur even without a prior coronary heart disease diagnosis ([ClevelandClinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). As a result, identifying predictors is necessary for preventing heart attack, and it is our main goal of this study.
-  
-  Based on preliminary research, **Body Mass Index (BMI)** is potentially related to heart attack and is chosen as the main predictor of heart attack risks in this study. According to studies, extra fat increases inflammation, insulin resistance, and arterial damage discussing groups that may be more vulnerable or underrepresented ([NIH](https://pmc.ncbi.nlm.nih.gov/articles/PMC8449192/). Moreover, BMI is the primary diagnosing metrics for obesity, a disease that has impacts 41.9% of U.S. adults ([CDC](https://www.cdc.gov/obesity/adult-obesity-facts/index.html)). Given the wide impacts of obesity on U.S adults, exploring correlation between BMI and heart attack risks can have significant implication to a wide range of U.S populations. As a result, we use **Body Mass Index (BMI)** as the main predictor for heart attack risks in this study.
-  
-  While BMI is a potential predictor of heart attack, its relationship with heart attack risks may be modulated and confounded by other demographic variables. Thus, in this study, we also explore the interaction between four demographic factors and BMI, and we controlled these covariates by including them in the model. The demographic variables include: **Sex**, **Race**, **Age**, and **Income**. 
-  
-  In our regression model, we use **Body Mass Index** as our main predictor, and we include **Sex**, **Race**, **Age**, and **Income** as covariates in the model. Based on our selection of predictors, we subset our original 2015 BRFSS dataset to only include these variables in our final dataset. With that in mind, let’s look at the specific variables that will guide our exploration.  
+  The original dataset contains 330 columns, making it difficult to track variables relevant to our research. Therefore, we subset the data to include only the variables necessary for our analysis.
 
-- **CVDINFR4**: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
+  Our primary outcome of interest is `Heart Attack`. This choice is intentional: heart attacks are acute, life-threatening events that affect an estimated 17.9 million people worldwide each year ([NIH](https://www.nhlbi.nih.gov/health/heart-attack)) and require immediate medical attention. Moreover, they can occur even in individuals without a prior diagnosis of coronary heart disease ([Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/16818-heart-attack-myocardial-infarction)). Therefore, identifying predictors is critical for preventing heart attack, making this outcome central to our study.
+  
+  Based on prior research, `Body Mass Index (BMI)` is a plausible predictor of heart attack risk and is selected as the main predictor in our model. Excess body fat has been linked to inflammation, insulin resistance, and arterial damage ([NIH](https://pmc.ncbi.nlm.nih.gov/articles/PMC8449192/). Moreover, BMI is the primary diagnostic metric for obesity -- a condition affecting 41.9% of U.S. adults ([CDC](https://www.cdc.gov/obesity/adult-obesity-facts/index.html)). Given obesity’s widespread prevalence and its cardiovascular implications, examining the relationship between BMI and heart attack risk has significant public health relevance.
+  
+  Because BMI’s effect on heart attack risk may be influenced by other factors, we also include four demographic variables -- `Sex`, `Race`, `Age`, and `Income` -- as covariates. These variables help control for potential confounding and allow us to assess interactions between BMI and demographic characteristics.
+  
+  In summary, our final dataset includes `Heart Attack` as the response variable, `BMI` as the primary predictor, and `Sex`, `Race`, `Age`, and `Income` as covariates. The original BRFSS dataset was subset accordingly for the analysis. With that in mind, let’s look at the specific variables that will guide our exploration.  
+
+- `CVDINFR4`: Whether the respondent has ever been told they had a heart attack (myocardial infarction).  
   - 1 = Yes - 2 = No - 7 = Don’t know - 9 = Refused  
 
-- **SEX**: Biological sex of the respondent.  
+- `SEX`: Biological sex of the respondent.  
   - 1 = Male - 2 = Female  
 
-- **INCOME2**: Annual household income from all sources, in categorical brackets.  
+- `INCOME2`: Annual household income from all sources, in categorical brackets.  
   - 1–8 = Ranges from < $10,000 to ≥ $75,000 - 77 = Don’t know - 99 = Refused  
 
-- **X_RACEGR3**: Race group (recoded into 3 categories).  
+- `X_RACEGR3`: Race group (recoded into 3 categories).  
   - 1 = White only - 2 = Black only - 3 = Other or multiracial  
 
-- **X_AGEG5YR**: Age group in 5-year intervals.  
+- `X_AGEG5YR`: Age group in 5-year intervals.  
   - 1 = 18–24 - 2 = 25–29 - ... - 13 = 80+  
 
-- **X_BMI5**: Body Mass Index (BMI), calculated as BMI × 100.  
+- `X_BMI5`: Body Mass Index (BMI), calculated as BMI × 100.  
   - Continuous variable: Divide by 100 to get actual BMI  
 
-- **X_BMI5CAT**: BMI category based on X_BMI5.  
+- `X_BMI5CAT`: BMI category based on X_BMI5.  
   - 1 = Underweight - 2 = Normal weight - 3 = Overweight - 4 = Obese  
 
   Taken together, these variables give us a comprehensive prediction on heart attack risks. The next step in our exploration will be preparing and transforming the data so we can uncover these relationships in a clear, systematic way.
@@ -74,7 +74,7 @@ library(ggeffects)
 ```
 <br><br>
 
-2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio as data frame **df**, and we shows the first 6 observations of the dataset usnig the function head(). 
+2. **Loading Dataset**: We first load our original dataset **2015.csv** into R Studio as data frame **df**, and we shows the first 6 observations of the dataset using the function head(). 
 
 ```{r}
 #Load original dataset
@@ -83,7 +83,7 @@ head(df)
 ```
 <br><br>
 
-3. **Selecting relevant variables**: The original dataset **df** has 330 variables. To have a more effective and concise dataset, we subset the dataset to include only include variables that will be used for future analysis. These include response variable -- heart attack(`CVDINFR4`), and predictors -- sex(`SEX`), income level(`INCOME2`), race(`X_RACEGR3`), age(`X_AGE80` for numeric; `X_AGEG5YR` for categorical), and BMI(`X_BMI5` for numeric; `X_BMI5CAT` for categorical). We subset the dataset and import the new dataset as data frame **df1**.
+3. **Selecting relevant variables**: The original dataset, `df`, contains 330 variables. To create a more concise and analysis-ready dataset, we subset it to include only the variables required for our study. These include the response variable **heart attack** (`CVDINFR4`) and the predictors **sex** (`SEX`), **income level** (`INCOME2`), **race** (`X_RACEGR3`), **age** (`X_AGE80` for numeric; `X_AGEG5YR` for categorical), and **BMI** (`X_BMI5` for numeric; `X_BMI5CAT` for categorical). The subsetted dataset is stored as a new data frame, `df1`.
 
 ```{r}
 #Select relevant predictors and dependent variable
@@ -94,18 +94,19 @@ df1 <- df[, c("CVDINFR4", "SEX", "INCOME2", "X_RACEGR3", "X_AGEG5YR", "X_AGE80",
 
 #### 2) Factoring and Renaming Variables 
 
-After selecting response variable and main predictors, we redefine our variables in three setps: factor variables, rename variables, and detect NA in the dataset.
+After selecting the response variable and main predictors, we redefine our variables in three steps: **factor variables**, **rename variables**, and **detect NA values**.
 
-  **Factor variables**: In the original dataset, all variables are coded as numbers, including categorical values. Thus, we first factor all the predictors by changing numbers into their corresponding categorical labels. We do this by using factor() functions.
-  
-  **Rename variables**: We also rename variables by storing factored variables into a clearer name.
-  
-  **Detect NA**: For NA values, they are encoded as specific numbers for each predictor. The specific values representing NA are written in the 2015 codebook report on CDC website. We look up for numbers that represent NA for each variable, and we recode these numbers into "NA" using factor() functions.
+-- **Factor variables**: In the original dataset, all variables are coded as numbers, even when they represent categories. We convert these numeric codes to their corresponding categorical labels using the `factor()` function.  
+
+-- **Rename variables**: For clarity, we store the factored variables under more descriptive names.  
+
+-- **Detect NA values**: In the BRFSS dataset, missing values are encoded as specific numeric codes for each variable (as documented in the 2015 BRFSS codebook available on the CDC website). We identify these codes for each variable and recode them to `NA` using the `factor()` function.
+
 <br><br>
 
 **(a)** Response Variable -- HeartAttack
 
-Our response variable Heart Attack is named as `CVDINFR4` in the original dataset and include 4 categories: 1 = No, 2 = Yes, 7 = Don't Know, 9 = Refused. We first factor the variable to replace numeric values with categorical labels by using function factor(). Specifically, we relabel 1 and 2 into No and Yes, and we relabel 7 and 9 into NA. Then we store the relabeled variable into a new variable `HeartAttack`.
+Our response variable, **Heart Attack**, is stored as `CVDINFR4` in the original dataset and contains four categories:  `1 = No`, `2 = Yes`, `7 = Don't know`, and `9 = Refused`.  We convert the numeric codes into descriptive labels using the `factor()` function. Specifically, we recode `1` and `2` as `"No"` and `"Yes"`, and treat `7` and `9` as missing values (`NA`). The cleaned and relabeled variable is stored as `HeartAttack`.
 
 ```{r}
 # Recode CVDINFR4
@@ -116,7 +117,7 @@ df1$HeartAttack <- factor(df1$HeartAttack, levels = c(1, 2), labels = c("No", "Y
 
 **(b)** Main Predictor -- Body Mass Index
 
-Our main predictor Body Mass Index (BMI) is named as `X_BMI5` in the original dataset and is numeric discrete variable. We first factor the variable using function factor(). Specifically, we relabel 9999 into NA, because it represents "Don’t know/Refused/Missing". Then we store the relabeled variable into a new variable `BMI_Num`. Beyond factoring and renaming the variable, we also divide the variable with 100. In the original dataset, BMI is represented by BMI * 100%, therefore, to show the actual BMI value, we divide the variable by 100. 
+Our main predictor, **Body Mass Index (BMI)**, is stored as `X_BMI5` in the original dataset and is a numeric variable, so no factor conversion is required. In this variable, a value of `9999` indicates “Don’t know/Refused/Missing,” which we recode as `NA`. We then store the cleaned values in a new variable, `BMI_Num`. Because BMI values in the original dataset are multiplied by 100, we divide them by 100 to obtain the actual BMI values.
 
 ```{r}
 # Recode _BMI5 
@@ -126,7 +127,7 @@ df1$BMI_Num <- df1$BMI_Num / 100
 ```
 <br><br>
 
-While BMI as a numeric variable is used in the regression model, BMI as categorical variable with 4 categories is used in the EDA analysis and bar graphs. It is named as `X_BMI5CAT` in the original dataset and include 4 categories: 1 = Underweight, 2 = Normal, 3 = Overweight, 4 = Obese. We factor the variable to replace numeric values with categorical labels by using function factor(). Then we store the relabeled variable into a new variable `BMI_Cat`.
+While BMI as a numeric variable is used in the regression model, BMI as a categorical variable with four categories is used in the EDA analysis and bar graphs. In the original dataset, this variable is stored as `X_BMI5CAT` and contains four categories: `1 = Underweight`, `2 = Normal`, `3 = Overweight`, and `4 = Obese`. We convert the numeric codes to descriptive labels using the `factor()` function and store the relabeled variable in a new variable, `BMI_Cat`.
 
 ```{r}
 # Recode _BMI5CAT
@@ -137,7 +138,7 @@ df1$BMI_Cat <- factor(df1$`X_BMI5CAT`, levels = 1:4,
 
 **(c)** Demographic Predictor -- Sex
 
-The first demographic predictor sex is named as `SEX` in the original dataset and include 2 categories: 1 = Male, 2 = Female. We factor the variable to replace numeric values with categorical labels by using function factor(). Then we store the relabeled variable into a new variable `SEX`.
+The first demographic predictor, **Sex**, is stored as `SEX` in the original dataset and contains two categories: `1 = Male` and `2 = Female`.We convert the numeric codes to descriptive labels using the `factor()` function and store the relabeled variable in a new variable, `SEX`.
 
 ```{r}
 # Recode SEX
@@ -147,7 +148,7 @@ df1$SEX <- factor(df1$SEX, levels = c(1, 2), labels = c("Male", "Female"))
 
 **(d)** Demographic Predictor -- Income
 
-The second demographic predictor income is named as `INCOME2` in the original dataset and include 9 categories: 1 = <$10k, 2 = $10-15k, 3 = $15-20k, 4 = $20-25k, 5 = $25-35k, 6 = $35-50k, 7 = $50-75k, 8 = $>=75k, 77 or 99 = Don’t know/Not sure/Missing. We factor the variable to replace numeric values with categorical labels by using function factor(). We also we relabel 77 and 99 into NA. Then we store the relabeled variable into a new variable `INCOME`.
+The second demographic predictor, **Income**, is stored as `INCOME2` in the original dataset and contains nine categories: `1 = <$10k`, `2 = $10–15k`, `3 = $15–20k`, `4 = $20–25k`, `5 = $25–35k`, `6 = $35–50k`, `7 = $50–75k`, `8 = ≥$75k`, and `77` or `99` = *Don't know / Not sure / Missing*. We convert the numeric codes into descriptive labels using the `factor()` function and recode `77` and `99` as `NA`. The cleaned variable is stored as `INCOME`.
 
 ```{r}
 # Recode INCOME2
@@ -160,7 +161,7 @@ df1$INCOME <- factor(df1$INCOME2, levels = c(1:8),
 
 **(e)** Demographic Predictor -- Race
 
-The third demographic predictor race is named as `X_RACEGR3` in the original dataset and include 6 categories: 1 = White, 2 = Black, 3 = Other, 4 = Multiracial, 5 = Hispanic, 9 = Don’t know/Not sure/Missing. We factor the variable to replace numeric values with categorical labels by using function factor(). We also we relabel 9 into NA. Then we store the relabeled variable into a new variable `RACE`.
+The third demographic predictor, **Race**, is stored as `X_RACEGR3` in the original dataset and contains six categories: `1 = White`, `2 = Black`, `3 = Other`, `4 = Multiracial`, `5 = Hispanic`, and `9 = Don't know / Not sure / Missing`. We convert the numeric codes into descriptive labels using the `factor()` function and recode `9` as `NA`. The cleaned variable is stored as `RACE`.
 
 ```{r}
 # Recode _RACEGR3 as factor with appropriate labels
@@ -174,7 +175,7 @@ df1$RACE <- factor(df1$`X_RACEGR3`,
 
 **(f)** Demographic Predictor -- Age
 
-The fourth demographic predictor age is named as `X_AGE80` in the original dataset and is numeric discrete variable. We store the relabeled variable into a new variable `AGE_Num`.
+The fourth demographic predictor, **Age**, is stored as `X_AGE80` in the original dataset and is a numeric discrete variable representing age in years (capped at 80). We store this variable as `AGE_Num` for clarity.
 
 ```{r}
 # Recode _AGE80 
@@ -182,7 +183,7 @@ names(df1)[names(df1) == "X_AGE80"] <- "AGE_Num"
 ```
 <br><br>
 
-While age as a numeric variable is used in the regression model, age as categorical variable with 13 categories is used in the EDA analysis and bar graphs. It is named as `X_AGEG5YR` in the original dataset and include 13 categories. We factor the variable to replace numeric values with categorical labels by using function factor(). Then we store the relabeled variable into a new variable `AGE`.
+While age as a numeric variable is used in the regression model, age as a categorical variable with 13 categories is used in the EDA analysis and bar graphs. In the original dataset, this variable is stored as `X_AGEG5YR` and contains 13 ordered categories. We convert the numeric codes into descriptive labels using the `factor()` function and store the relabeled variable as `AGE`.
 
 ```{r}
 # Recode _AGEG5YR
@@ -194,7 +195,7 @@ df1$AGE <- factor(df1$`X_AGEG5YR`, levels = 1:13,
 
 #### 3) Handling Missing Values
 
-In the previous step, we rename and factor relevant variables, we also detect and define NA for each variable. The next step is to remove any rows with NA values. We remove any rows within the dataset that have missing values using na.omit() functions. We then store the dataset into a new dataset called **df_clean**, and we export the dataset into a CSV file for future use using write.csv() functions.
+After renaming and factoring the relevant variables and defining `NA` values, the next step is to remove any rows with missing data. We use the `na.omit()` function to delete rows containing `NA` values from the dataset. The cleaned dataset is stored as `df_clean` and exported as a CSV file for future use with the `write.csv()` function.
 
 ```{r}
 # Remove rows with any NA values
@@ -207,7 +208,7 @@ write.csv(df_clean, "~/Documents/GitHub/EDA_Project/data/cleaned_data.csv", row.
 
 #### 4) Importing Cleanded Dataset
 
-The final cleanded dataset is imported into R for future research use using read.csv(). The dataset is imported as a dataframe named df_clean.
+The final cleanded dataset is imported into R for future analysis using read.csv(). The dataset is stored as a new data frame `df_clean`.
 
 ```{r}
 df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
@@ -218,9 +219,11 @@ df_clean <- read.csv("~/Documents/GitHub/EDA_Project/data/cleaned_data.csv")
 
 #### 1) Frequency Distribution of Heart Attack and Predictors
 
-**Visualization**: After getting a cleaned dataset, we visualize the distribution of response variable **HeartAttack** and 5 predictors. We also measure the central tendency using mode, median, or mean depending on whether the variable is categorical, nominal, and numeric. For distribution statistics, we first calculated the frequency of observations within each category using table(), and we also convert frequency to proportion using prop.table(). For visualizing distribution, we use bar graphs to plot the proportion of observations within each category using ggplot().
+**Visualization**: After obtaining the cleaned dataset, we visualize the distribution of the response variable **HeartAttack** and the five predictors. We also measure the central tendency using the mode, median, or mean, depending on whether the variable is categorical, ordinal, or numeric. For distribution statistics, we first calculate the frequency of observations within each category using `table()`, then convert frequencies to proportions using `prop.table()`. For visualization, we create bar graphs showing the proportion of observations in each category using the `ggplot()` function.  
+<br><br>
 
-**Define Mode Functions for central tendency measurement**: We create the function get_mode(), a function we will later use for the central tendency measurement. Get_mode() takes in a vector form, which it then uses to create a table of that vector, ultimately finding the value with the highest frequency in that table. 
+**Define Mode Function for Central Tendency Measurement**:  
+We define a custom function `get_mode()` to calculate the mode, which will be used later for central tendency measurement. The function takes a vector as input, generates a frequency table, and returns the value with the highest frequency.
 
 ```{r}
 # Function to calculate mode
@@ -258,7 +261,9 @@ cat("Mode:", get_mode(df_clean$HeartAttack), "\n\n")
 
 **(b)** Predictor -- BMI
 
-For distribution statistics and visualizing distribution, we use categorical variable -- BMI_Cat. When using numeric version, the proportion is calculated for each numeric value. The resulting proportion may be hard to see, and the variation may not be significant. Contrarily, categorical version give us a better understanding of how distribution varies across main categorical levels. For central tendency measurement, we return to BMI_Num to measure more detailed statistic, and we calculate mode, median, and mean of the variable.
+For distribution statistics and visualization, we use the categorical version of BMI (`BMI_Cat`). When using the numeric version (`BMI_Num`), the proportion is calculated for each distinct numeric value, which can make the plot difficult to interpret and may not reveal meaningful variation. In contrast, the categorical version provides a clearer view of how the distribution varies across the main BMI categories. 
+
+For central tendency measurement, we use the numeric version (`BMI_Num`) to obtain more detailed statistics. Specifically, we calculate the **mode**, **median**, and **mean** of BMI to better understand its central distribution.
 
 ```{r}
 #table
@@ -356,7 +361,9 @@ cat("Mode:", get_mode(df_clean$RACE), "\n\n")
 
 **(f)** Predictor -- Age
 
-For distribution statistics and visualizing distribution, we use categorical variable -- AGE. When using numeric version, the proportion is calculated for each numeric value. The resulting proportion may be hard to see, and the variation may not be significant. Contrarily, categorical version give us a better understanding of how distribution varies across main categorical levels. For central tendency measurement, we return to AGE_Num to measure more detailed statistic, and we calculate mode, median, and mean of the variable.
+For distribution statistics and visualization, we use the categorical version of Age (`AGE`). When using the numeric version (`AGE_Num`), the proportion is calculated for each distinct numeric value, which can make the plot difficult to interpret and may not reveal meaningful variation. In contrast, the categorical version provides a clearer view of how the distribution varies across the main age groups.  
+
+For central tendency measurement, we use the numeric version (`AGE_Num`) to obtain more detailed statistics. Specifically, we calculate the **mode**, **median**, and **mean** of Age to better understand its central distribution.
 
 ```{r}
 #table
@@ -382,7 +389,10 @@ cat("Mean:", mean(df_clean$AGE_Num, na.rm = TRUE), "\n\n")
 
 #### 2) Correlation Analysis
 
-In this section, for each predictor, we measure how the proportion of participants with heart attack changes across different categorical levels. This analysis provides an initial insight into the significance of each predictor; it also suggests the potential sign of coefficients in regression analysis on **HeartAttack**. For distribution statistics of heart attack across each predictor, we first calculated the proportion of individuals with heart attack within each category using prop.table(). For visualizing distribution of heart attack across each predictor, we use bar graphs to plot the proportion of people with heart attack within each category using ggplot(). 
+Moving beyond visualizing distribution, for each predictor, we examine how the proportion of participants with **HeartAttack** varies across different categorical levels. This analysis provides an initial insight into the potential significance of each predictor and hints at the possible sign of the coefficients in a regression analysis on **HeartAttack**.  
+
+For distribution statistics, we calculate the proportion of individuals with heart attack within each category of the predictor using the `prop.table()` function. For visualization, we use bar graphs created with `ggplot()` to display the proportion of participants with heart attack in each category.
+<br><br>
 
 We first define the main theme color for the future bar graphs
 ```{r}
@@ -392,7 +402,7 @@ custom_colors <- c("No" = "#1a80bb", "Yes" = "#f2c45f")
 
 **(a)** Heart Attack vs. BMI Categories
 
-For distribution statistics and visualizing distribution of heart attack across BMI levels, we use categorical variable -- BMI_Cat. When using numeric version, the proportion is calculated for each numeric value. The resulting proportion may be hard to see, and the variation may not be significant. Contrarily, categorical version give us a better understanding of how distribution varies across main categorical levels.
+For distribution statistics and visualization of **HeartAttack** across BMI levels, we use the categorical version of BMI (`BMI_Cat`). When using the numeric version (`BMI_Num`), the proportion is calculated for each distinct numeric value, which can make the results difficult to interpret and may not reveal meaningful variation. In contrast, the categorical version provides a clearer view of how the distribution of heart attack cases varies across the main BMI categories.
 
 ```{r}
 #Table
@@ -417,8 +427,6 @@ ggplot(df_clean, aes(x = BMI_Cat, fill = HeartAttack)) +
   scale_fill_manual(values = custom_colors) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-**Interpretation**: We do see a difference in proportion of heart attacks across the different categories of BMI. Obese group is having the highest proportion of having heart attack followed by underweight. Normal group has the lowest proportion of having heart attack.
 <br><br>
 
 **(b)** Heart Attack vs. Sex
@@ -485,7 +493,7 @@ ggplot(df_clean, aes(x = RACE, fill = HeartAttack)) +
 
 **(e)** Heart Attack vs. Age
 
-For distribution statistics and visualizing distribution of heart attack across age groups, we use categorical variable -- AGE. When using numeric version, the proportion is calculated for each numeric value. The resulting proportion may be hard to see, and the variation may not be significant. Contrarily, categorical version give us a better understanding of how distribution varies across main categorical levels.
+For distribution statistics and visualization of **HeartAttack** across age groups, we use the categorical version of Age (`AGE`). When using the numeric version (`AGE_Num`), the proportion is calculated for each distinct numeric value, which can make the results difficult to interpret and may not reveal meaningful variation. In contrast, the categorical version provides a clearer view of how the distribution of heart attack cases varies across the main age categories.
 
 ```{r}
 #Table
@@ -503,11 +511,19 @@ ggplot(df_clean, aes(x = AGE, fill = HeartAttack)) +
 ```
 <br><br>
 
-#### 3) Conclusion
+**(f)** Conclusion
 
-  Based on the correlation analysis, a positive correlation is observed between main predictor BMI and heart attack risks. When increasing BMI from normal group (BMI = 18.5-24.9) to obese group (BMI ≥ 30.0), the percentage of individuals with heart attack increases from 4.3% to 7.2%. This suggests BMI as a potential predictor of heart attack risks.
-  
-  Besides BMI, the proportion of individuals with heart attack also varies across categorical levels in all demographic variables. It indicates that all the demographic variables are potential confounding variables and must be controlled in the future model. Specifically, for **sex**, the proportion of males getting heart attack is higher than the proportion of females (0.078 vs. 0.042), suggesting males having higher risks of getting heart attack than females. For **age**, there is a strong positive correlation between age and the proportion of heart attacks. As the ages get higher and higher, the proportion also increases. For **income**, the proportion decreases as income level increases, suggesting a potential negative correlation between income level and odds of having heart attack. For **race**, Multiracial group is having the highest proportion of individuals with heart attack, and Hispanic group is having the lowest proportion of having heart attack.
+  Based on the correlation analysis, a positive association is observed between the main predictor **BMI** and heart attack risk. When BMI increases from the normal group (18.5–24.9) to the obese group (≥30.0), the percentage of individuals with heart attack rises from **4.3%** to **7.2%**, suggesting BMI is a potential predictor of heart attack risk.  
+
+  Beyond BMI, the proportion of individuals with heart attack also varies across all demographic variables, indicating that these variables may act as confounders and should be controlled in the regression model.  
+
+- **Sex**: The proportion of heart attack cases is higher among males (**7.8%**) than females (**4.2%**), suggesting higher risk for males.  
+
+- **Age**: There is a strong positive correlation between age and heart attack proportion—risk increases with age.
+
+- **Income**: The proportion decreases as income level increases, suggesting a potential negative correlation between income and heart attack risk.  
+
+- **Race**: The multiracial group has the highest proportion of individuals with heart attack, while the Hispanic group has the lowest proportion.
 <br><br>
 
 ### IV. Next Step
